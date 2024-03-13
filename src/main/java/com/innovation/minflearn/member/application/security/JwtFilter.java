@@ -45,8 +45,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = JwtAuthProvider.getUsername(token, secretKey);
-        AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(username);
+        String email = JwtAuthProvider.getEmail(token, secretKey);
+        AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(email);
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(accountContext.getMemberId(), null, accountContext.getAuthorities());
