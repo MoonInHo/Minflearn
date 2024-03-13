@@ -23,32 +23,29 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public TokenDto signIn(SignInRequestDto signInRequestDto) {
+    public TokenDto signIn(SignInRequestDto signInRequestDto, String refreshTokenCookie) {
 
         Authentication authentication = getAuthentication(signInRequestDto);
 
         Long memberId = getMemberId(authentication);
-        if (isRefreshTokenExist(memberId)) {
-            refreshTokenRepository.deleteById(memberId);
+        if (isRefreshTokenExist(refreshTokenCookie)) {
+            refreshTokenRepository.deleteById(refreshTokenCookie);
         }
 
         String accessToken = jwtAuthProvider.generateAccessToken(authentication);
         String refreshToken = jwtAuthProvider.generateRefreshToken();
 
-        refreshTokenRepository.save(new RefreshToken(memberId, refreshToken));
+        refreshTokenRepository.save(new RefreshToken(refreshToken, memberId));
 
         return new TokenDto(accessToken, refreshToken);
     }
 
     @Transactional
-    public void signOut(String authorizationHeader) {
+    public void signOut(String refreshTokenCookie) {
 
-        String accessToken = jwtAuthProvider.resolveToken(authorizationHeader);
+        validateRefreshTokenExistence(refreshTokenCookie);
 
-        Long memberId = jwtAuthProvider.getUserId(accessToken);
-        validateRefreshTokenExistence(memberId);
-
-        refreshTokenRepository.deleteById(memberId);
+        refreshTokenRepository.deleteById(refreshTokenCookie);
     }
 
     private Authentication getAuthentication(SignInRequestDto signInRequestDto) {
@@ -65,13 +62,13 @@ public class AuthService {
         return principal.getMemberId();
     }
 
-    private void validateRefreshTokenExistence(Long memberId) {
-        if (!isRefreshTokenExist(memberId)) {
+    private void validateRefreshTokenExistence(String refreshToken) {
+        if (!isRefreshTokenExist(refreshToken)) {
             throw new ExpiredRefreshTokenException();
         }
     }
 
-    private boolean isRefreshTokenExist(Long memberId) {
-        return refreshTokenRepository.existsById(memberId);
+    private boolean isRefreshTokenExist(String refreshToken) {
+        return refreshTokenRepository.existsById(refreshToken);
     }
 }
