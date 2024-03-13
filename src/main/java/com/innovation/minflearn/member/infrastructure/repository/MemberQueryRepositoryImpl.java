@@ -1,10 +1,17 @@
 package com.innovation.minflearn.member.infrastructure.repository;
 
+import com.innovation.minflearn.member.domain.entity.Member;
+import com.innovation.minflearn.member.domain.entity.QMember;
 import com.innovation.minflearn.member.domain.vo.Email;
 import com.innovation.minflearn.member.domain.vo.Phone;
+import com.innovation.minflearn.member.infrastructure.dto.response.GetMemberResponseDto;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 import static com.innovation.minflearn.member.domain.entity.QMember.member;
 
@@ -30,5 +37,16 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 .from(member)
                 .where(member.phone.eq(phone))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public Optional<Member> getMember(Email email) {
+
+        Member result = queryFactory
+                .selectFrom(member)
+                .where(member.email.eq(email))
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }

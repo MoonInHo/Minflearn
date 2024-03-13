@@ -1,6 +1,6 @@
 package com.innovation.minflearn.member.presentation.controller;
 
-import com.innovation.minflearn.member.application.dto.CreateMemberRequestDto;
+import com.innovation.minflearn.member.application.dto.request.CreateMemberRequestDto;
 import com.innovation.minflearn.member.application.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class MemberRestController {
 
     private final MemberService memberService;
 
-    @PostMapping
+    @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(
             @RequestBody CreateMemberRequestDto createMemberRequestDto
     ) {

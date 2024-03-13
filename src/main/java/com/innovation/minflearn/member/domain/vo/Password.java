@@ -2,6 +2,7 @@ package com.innovation.minflearn.member.domain.vo;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class Password {
@@ -21,5 +22,13 @@ public class Password {
             throw new IllegalArgumentException("비밀번호엔 공백을 포함할 수 없습니다.");
         }
         return new Password(password);
+    }
+
+    public Password encryptPassword(PasswordEncoder passwordEncoder) {
+        return new Password(passwordEncoder.encode(password));
+    }
+
+    public String password() {
+        return password;
     }
 }

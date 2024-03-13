@@ -1,6 +1,7 @@
-package com.innovation.minflearn.member.application.dto;
+package com.innovation.minflearn.member.application.dto.request;
 
 import com.innovation.minflearn.member.domain.entity.Member;
+import com.innovation.minflearn.member.domain.enums.Role;
 import com.innovation.minflearn.member.domain.vo.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,8 @@ public class CreateMemberRequestDto {
                 Password.of(password),
                 BirthDate.of(birthDate),
                 Phone.of(phone),
-                Address.of(address, addressDetail)
+                Address.of(address, addressDetail),
+                Role.ROLE_USER
         );
     }
 }
