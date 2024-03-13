@@ -17,18 +17,11 @@ public class JwtAuthProvider {
     private final String SECRET_KEY;
     private final int ACCESS_TOKEN_EXPIRE;
     private final int REFRESH_TOKEN_EXPIRE;
-    private static final String GRANT_TYPE = "Bearer";
 
-    private final UserDetailsService userDetailsService;
-
-    public JwtAuthProvider(
-            @Value("${jwt.secret-key}") String secretKey,
-            UserDetailsService userDetailsService
-    ) {
+    public JwtAuthProvider(@Value("${jwt.secret-key}") String secretKey) {
         this.SECRET_KEY = secretKey;
         this.ACCESS_TOKEN_EXPIRE = 1000 * 60 * 30;
         this.REFRESH_TOKEN_EXPIRE = 1000 * 60 * 60 * 24 * 14;
-        this.userDetailsService = userDetailsService;
     }
 
     public String generateAccessToken(Authentication authentication) {
@@ -78,6 +71,9 @@ public class JwtAuthProvider {
     }
 
     public String resolveToken(String authorizationHeader) {
+
+        String GRANT_TYPE = "Bearer";
+
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(GRANT_TYPE)) {
             return authorizationHeader.substring(7);
         }
