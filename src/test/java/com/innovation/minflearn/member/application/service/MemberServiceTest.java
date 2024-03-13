@@ -2,7 +2,7 @@ package com.innovation.minflearn.member.application.service;
 
 import com.innovation.minflearn.exception.custom.member.DuplicateEmailException;
 import com.innovation.minflearn.exception.custom.member.DuplicatePhoneException;
-import com.innovation.minflearn.member.application.dto.CreateMemberRequestDto;
+import com.innovation.minflearn.member.application.dto.request.CreateMemberRequestDto;
 import com.innovation.minflearn.member.domain.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
@@ -27,6 +28,9 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private MemberService memberService;
@@ -72,7 +76,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName(" - 올바른 정보로 회원가입 시도시 사용자 정보 저장")
+    @DisplayName("회원 가입 - 올바른 정보로 회원가입 시도시 사용자 정보 저장")
     void properInfo_signUp_saveUserInfo() {
         //given
         given(memberRepository.isEmailExist(any())).willReturn(false);

@@ -2,11 +2,13 @@ package com.innovation.minflearn.member.application.service;
 
 import com.innovation.minflearn.exception.custom.member.DuplicateEmailException;
 import com.innovation.minflearn.exception.custom.member.DuplicatePhoneException;
-import com.innovation.minflearn.member.application.dto.CreateMemberRequestDto;
+import com.innovation.minflearn.member.application.dto.request.CreateMemberRequestDto;
+import com.innovation.minflearn.member.domain.entity.Member;
 import com.innovation.minflearn.member.domain.repository.MemberRepository;
 import com.innovation.minflearn.member.domain.vo.Email;
 import com.innovation.minflearn.member.domain.vo.Phone;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void signUp(CreateMemberRequestDto createMemberRequestDto) {
@@ -22,7 +25,10 @@ public class MemberService {
         checkDuplicateEmail(createMemberRequestDto);
         checkDuplicatePhone(createMemberRequestDto);
 
-        memberRepository.save(createMemberRequestDto.toEntity());
+        Member member = createMemberRequestDto.toEntity();
+        member.encryptPassword(passwordEncoder);
+
+        memberRepository.save(member);
     }
 
     private void checkDuplicateEmail(CreateMemberRequestDto createMemberRequestDto) {
