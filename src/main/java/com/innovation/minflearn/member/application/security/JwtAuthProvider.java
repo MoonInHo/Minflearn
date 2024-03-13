@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -63,8 +62,8 @@ public class JwtAuthProvider {
                 .before(new Date());
     }
 
-    public static String getUsername(String token, String secretKey) {
-        return extractClaims(token, secretKey).get("username", String.class);
+    public static String getEmail(String token, String secretKey) {
+        return extractClaims(token, secretKey).get("email", String.class);
     }
 
     private static Claims extractClaims(String token, String secretKey) {
@@ -72,5 +71,16 @@ public class JwtAuthProvider {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Long getUserId(String token) {
+        return extractClaims(token, SECRET_KEY).get("userId", Long.class);
+    }
+
+    public String resolveToken(String authorizationHeader) {
+        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(GRANT_TYPE)) {
+            return authorizationHeader.substring(7);
+        }
+        return null;
     }
 }

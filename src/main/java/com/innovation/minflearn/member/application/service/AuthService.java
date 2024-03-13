@@ -1,5 +1,6 @@
 package com.innovation.minflearn.member.application.service;
 
+import com.innovation.minflearn.exception.custom.auth.ExpiredRefreshTokenException;
 import com.innovation.minflearn.member.application.dto.response.TokenDto;
 import com.innovation.minflearn.member.application.security.AccountContext;
 import com.innovation.minflearn.member.application.security.JwtAuthProvider;
@@ -39,6 +40,17 @@ public class AuthService {
         return new TokenDto(accessToken, refreshToken);
     }
 
+    @Transactional
+    public void signOut(String authorizationHeader) {
+
+        String accessToken = jwtAuthProvider.resolveToken(authorizationHeader);
+
+        Long memberId = jwtAuthProvider.getUserId(accessToken);
+        validateRefreshTokenExistence(memberId);
+
+        refreshTokenRepository.deleteById(memberId);
+    }
+
     private Authentication getAuthentication(SignInRequestDto signInRequestDto) {
         return authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -51,6 +63,12 @@ public class AuthService {
     private Long getMemberId(Authentication authentication) {
         AccountContext principal = (AccountContext) authentication.getPrincipal();
         return principal.getMemberId();
+    }
+
+    private void validateRefreshTokenExistence(Long memberId) {
+        if (!isRefreshTokenExist(memberId)) {
+            throw new ExpiredRefreshTokenException();
+        }
     }
 
     private boolean isRefreshTokenExist(Long memberId) {
