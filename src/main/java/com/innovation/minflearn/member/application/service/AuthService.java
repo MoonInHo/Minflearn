@@ -2,7 +2,6 @@ package com.innovation.minflearn.member.application.service;
 
 import com.innovation.minflearn.exception.custom.auth.ExpiredRefreshTokenException;
 import com.innovation.minflearn.member.application.dto.response.TokenDto;
-import com.innovation.minflearn.member.application.security.AccountContext;
 import com.innovation.minflearn.member.application.security.JwtAuthProvider;
 import com.innovation.minflearn.member.domain.entity.RefreshToken;
 import com.innovation.minflearn.member.domain.repository.RefreshTokenRepository;
@@ -18,24 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final AuthenticationManager authenticationManager;
     private final JwtAuthProvider jwtAuthProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthenticationManager authenticationManager;
 
     @Transactional
     public TokenDto signIn(SignInRequestDto signInRequestDto, String refreshTokenCookie) {
 
+        deleteRefreshTokenIfExist(refreshTokenCookie);
         Authentication authentication = getAuthentication(signInRequestDto);
-
-        Long memberId = getMemberId(authentication);
-        if (isRefreshTokenExist(refreshTokenCookie)) {
-            refreshTokenRepository.deleteById(refreshTokenCookie);
-        }
 
         String accessToken = jwtAuthProvider.generateAccessToken(authentication);
         String refreshToken = jwtAuthProvider.generateRefreshToken();
 
-        refreshTokenRepository.save(new RefreshToken(refreshToken, memberId));
+        refreshTokenRepository.save(new RefreshToken(refreshToken, signInRequestDto.email()));
 
         return new TokenDto(accessToken, refreshToken);
     }
@@ -43,9 +38,19 @@ public class AuthService {
     @Transactional
     public void signOut(String refreshTokenCookie) {
 
-        validateRefreshTokenExistence(refreshTokenCookie);
+        validateRefreshToken(refreshTokenCookie);
 
         refreshTokenRepository.deleteById(refreshTokenCookie);
+    }
+
+    @Transactional
+    public TokenDto reissue(String authorizationHeader, String refreshTokenCookie) {
+
+        validateRefreshToken(refreshTokenCookie);
+
+        String newAccessToken = jwtAuthProvider.reissueAccessToken(authorizationHeader);
+
+        return new TokenDto(newAccessToken, null);
     }
 
     private Authentication getAuthentication(SignInRequestDto signInRequestDto) {
@@ -57,12 +62,13 @@ public class AuthService {
         );
     }
 
-    private Long getMemberId(Authentication authentication) {
-        AccountContext principal = (AccountContext) authentication.getPrincipal();
-        return principal.getMemberId();
+    private void deleteRefreshTokenIfExist(String refreshTokenCookie) {
+        if (isRefreshTokenExist(refreshTokenCookie)) {
+            refreshTokenRepository.deleteById(refreshTokenCookie);
+        }
     }
 
-    private void validateRefreshTokenExistence(String refreshToken) {
+    private void validateRefreshToken(String refreshToken) {
         if (!isRefreshTokenExist(refreshToken)) {
             throw new ExpiredRefreshTokenException();
         }

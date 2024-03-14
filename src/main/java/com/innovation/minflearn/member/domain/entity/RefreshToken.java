@@ -12,14 +12,14 @@ public class RefreshToken {
     @Id
     private String refreshToken;
 
-    private Long memberId;
+    private String email;
 
     @TimeToLive
     private Long expiration;
 
-    public RefreshToken(String refreshToken, Long memberId) {
+    public RefreshToken(String refreshToken, String email) {
         this.refreshToken = refreshToken;
-        this.memberId = memberId;
+        this.email = email;
         this.expiration = 1209600L;
     }
 }

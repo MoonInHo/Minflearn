@@ -9,9 +9,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service("userDetailsService")
+@Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -21,6 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.getMember(Email.of(email))
                 .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 다시 확인해주세요."));
 
-        return new AccountContext(email, member.password(), member.createRole(), member.id());
+        return new AccountContext(email, member.password(), member.createRole());
     }
 }
