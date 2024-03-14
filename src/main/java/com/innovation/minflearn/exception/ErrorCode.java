@@ -14,7 +14,8 @@ public enum ErrorCode {
 
     // Authorization
     EXPIRED_ACCESS_TOKEN("액세스 토큰이 만료 되었거나 존재하지 않습니다."),
-    EXPIRED_REFRESH_TOKEN("리프레시 토큰이 존재하지 않거나 만료되었습니다.");
+    EXPIRED_REFRESH_TOKEN("리프레시 토큰이 존재하지 않거나 만료되었습니다."),
+    INVALID_SIGNATURE("서명이 올바르지 않습니다.");
 
     private final String message;
 

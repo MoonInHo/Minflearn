@@ -4,6 +4,7 @@ import com.innovation.minflearn.exception.handler.filter.ExceptionHandlerFilter;
 import com.innovation.minflearn.member.application.security.JwtAccessDeniedHandler;
 import com.innovation.minflearn.member.application.security.JwtAuthenticationEntryPoint;
 import com.innovation.minflearn.member.application.security.JwtFilter;
+import com.innovation.minflearn.member.application.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,14 +28,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class securityConfig {
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
+    private final JwtUtil jwtUtil;
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
-    private final UserDetailsService userDetailsService;
 
 
     @Bean
@@ -68,7 +65,7 @@ public class securityConfig {
                                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .addFilterBefore(
-                        new JwtFilter(userDetailsService, secretKey), UsernamePasswordAuthenticationFilter.class
+                        new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class
                 )
                 .addFilterBefore(
                         new ExceptionHandlerFilter(), JwtFilter.class

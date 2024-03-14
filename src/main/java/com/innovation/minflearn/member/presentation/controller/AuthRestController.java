@@ -23,11 +23,11 @@ public class AuthRestController {
     public ResponseEntity<Void> signIn(
             HttpServletResponse response,
             @RequestBody SignInRequestDto signInRequestDto,
-            @CookieValue(name = "refresh_token", required = false) String refreshToken
+            @CookieValue(name = "refresh_token", required = false) String refreshTokenCookie
     ) {
-        TokenDto tokenDto = authService.signIn(signInRequestDto, refreshToken);
+        TokenDto tokenDto = authService.signIn(signInRequestDto, refreshTokenCookie);
 
-        setAuthorizationHeaderWithAccessToken(response, tokenDto);
+        setAuthorizationHeaderWithAccessToken(response, tokenDto); //TODO JwtAuthProvider 에서 response Header 로 전달하는 방법 고민
         setRefreshTokenCookie(response, tokenDto);
 
         return ResponseEntity.ok().build();
@@ -42,12 +42,24 @@ public class AuthRestController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/reissue")
+    public ResponseEntity<Void> reissue(
+            HttpServletResponse response,
+            @RequestHeader("Authorization") String authorizationHeader,
+            @CookieValue("refresh_token") String refreshTokenCookie
+    ) {
+        TokenDto tokenDto = authService.reissue(authorizationHeader, refreshTokenCookie);
+
+        setAuthorizationHeaderWithAccessToken(response, tokenDto);
+
+        return ResponseEntity.ok().build();
+    }
+
     private void setAuthorizationHeaderWithAccessToken(HttpServletResponse response, TokenDto tokenDto) {
         response.setHeader(AUTHORIZATION_HEADER, GRANT_TYPE + " " + tokenDto.getAccessToken());
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, TokenDto tokenDto) {
-
         Cookie refreshTokenCookie = new Cookie("refresh_token", tokenDto.getRefreshToken());
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);

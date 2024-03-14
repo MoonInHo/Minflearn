@@ -1,82 +1,59 @@
 package com.innovation.minflearn.member.application.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.Date;
 
 @Component
-public class JwtAuthProvider {
+@RequiredArgsConstructor
+public class JwtAuthProvider implements AuthenticationProvider {
 
-    private final String SECRET_KEY;
-    private final int ACCESS_TOKEN_EXPIRE;
-    private final int REFRESH_TOKEN_EXPIRE;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public JwtAuthProvider(@Value("${jwt.secret-key}") String secretKey) {
-        this.SECRET_KEY = secretKey;
-        this.ACCESS_TOKEN_EXPIRE = 1000 * 60 * 30;
-        this.REFRESH_TOKEN_EXPIRE = 1000 * 60 * 60 * 24 * 14;
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
+        String email = authentication.getName();
+        String password = (String) authentication.getCredentials();
+
+        AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(email);
+
+        if (!passwordEncoder.matches(password, accountContext.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+        return new UsernamePasswordAuthenticationToken(accountContext, null, accountContext.getAuthorities());
     }
 
     public String generateAccessToken(Authentication authentication) {
 
         AccountContext accountContext = (AccountContext) authentication.getPrincipal();
 
-        Claims claims = Jwts.claims();
-        claims.put("email", accountContext.getUsername());
-        claims.put("userId", accountContext.getMemberId());
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
+        return jwtUtil.generateAccessToken(accountContext.getUsername());
     }
 
     public String generateRefreshToken() {
-
-        return Jwts.builder()
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
+        return jwtUtil.generateRefreshToken();
     }
 
-    public static boolean isExpired(String token, String secretKey) {
-        return extractClaims(token, secretKey)
-                .getExpiration()
-                .before(new Date());
+    public String reissueAccessToken(String authorizationHeader) {
+
+        String accessToken = jwtUtil.resolveToken(authorizationHeader);
+        String email = jwtUtil.extractEmail(accessToken);
+
+        return jwtUtil.generateAccessToken(email);
     }
 
-    public static String getEmail(String token, String secretKey) {
-        return extractClaims(token, secretKey).get("email", String.class);
-    }
-
-    private static Claims extractClaims(String token, String secretKey) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public Long getUserId(String token) {
-        return extractClaims(token, SECRET_KEY).get("userId", Long.class);
-    }
-
-    public String resolveToken(String authorizationHeader) {
-
-        String GRANT_TYPE = "Bearer";
-
-        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(GRANT_TYPE)) {
-            return authorizationHeader.substring(7);
-        }
-        return null;
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return UsernamePasswordAuthenticationToken.class
+                .isAssignableFrom(authentication);
     }
 }
