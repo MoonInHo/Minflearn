@@ -1,8 +1,8 @@
 package com.innovation.minflearn.course.domain.entity;
 
+import com.innovation.minflearn.course.domain.enums.SectionNumber;
 import com.innovation.minflearn.course.domain.vo.section.LearningObjective;
 import com.innovation.minflearn.course.domain.vo.section.SectionTitle;
-import com.innovation.minflearn.course.domain.vo.section.SectionNumber;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SectionNumber sectionNumber;
 
@@ -25,5 +25,27 @@ public class Section {
     @Embedded
     private LearningObjective learningObjective;
 
+    @Column(nullable = false)
     private Long courseId;
+
+    private Section(
+            SectionNumber sectionNumber,
+            SectionTitle sectionTitle,
+            LearningObjective learningObjective,
+            Long courseId
+    ) {
+        this.sectionNumber = sectionNumber;
+        this.sectionTitle = sectionTitle;
+        this.learningObjective = learningObjective;
+        this.courseId = courseId;
+    }
+
+    public static Section createSection(
+            SectionNumber sectionNumber,
+            SectionTitle sectionTitle,
+            LearningObjective learningObjective,
+            Long courseId
+    ) {
+        return new Section(sectionNumber, sectionTitle, learningObjective, courseId);
+    }
 }
