@@ -40,6 +40,7 @@ public class Course {
     @Column(nullable = false)
     private CourseDuration courseDuration;
 
+    @Column(nullable = false)
     private Long memberId;
 
     private Course(
