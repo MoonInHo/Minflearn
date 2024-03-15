@@ -12,8 +12,8 @@ public class UnitId {
         this.unitId = unitId;
     }
 
-    public static void of() {
+    public static UnitId of() {
         //TODO unitID 생성 조건 설정하기 (ex. 강좌번호 + 섹션번호 + 강의번호)
-//        return new UnitId();
+        return new UnitId(0);
     }
 }
