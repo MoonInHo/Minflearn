@@ -51,6 +51,10 @@ public class JwtAuthProvider implements AuthenticationProvider {
         return jwtUtil.generateAccessToken(email);
     }
 
+    public String extractEmail(String authorizationHeader) {
+        return jwtUtil.extractEmail(jwtUtil.resolveToken(authorizationHeader));
+    }
+
     @Override
     public boolean supports(Class<?> authentication) {
         return UsernamePasswordAuthenticationToken.class
