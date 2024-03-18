@@ -1,5 +1,6 @@
 package com.innovation.minflearn.member.domain.vo;
 
+import com.innovation.minflearn.vo.member.Address;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

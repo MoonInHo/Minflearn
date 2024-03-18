@@ -1,5 +1,6 @@
 package com.innovation.minflearn.member.domain.vo;
 
+import com.innovation.minflearn.vo.member.Password;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
