@@ -2,8 +2,9 @@ package com.innovation.minflearn.member.application.service;
 
 import com.innovation.minflearn.exception.custom.member.DuplicateEmailException;
 import com.innovation.minflearn.exception.custom.member.DuplicatePhoneException;
-import com.innovation.minflearn.member.application.dto.request.CreateMemberRequestDto;
-import com.innovation.minflearn.member.domain.repository.MemberRepository;
+import com.innovation.minflearn.dto.request.CreateMemberRequestDto;
+import com.innovation.minflearn.repository.member.MemberRepository;
+import com.innovation.minflearn.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
