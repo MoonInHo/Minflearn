@@ -2,8 +2,10 @@ package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.dto.request.AddLectureRequestDto;
 import com.innovation.minflearn.entity.LectureFileEntity;
+import com.innovation.minflearn.exception.custom.section.SectionNotFoundException;
 import com.innovation.minflearn.repository.lecture.LectureFileRepository;
 import com.innovation.minflearn.repository.lecture.LectureRepository;
+import com.innovation.minflearn.repository.section.SectionRepository;
 import com.innovation.minflearn.security.JwtAuthProvider;
 import com.innovation.minflearn.vo.lecture.OriginFilename;
 import com.innovation.minflearn.vo.lecture.StoredFilename;
@@ -21,6 +23,7 @@ import java.util.UUID;
 public class LectureService {
 
     private final JwtAuthProvider jwtAuthProvider;
+    private final SectionRepository sectionRepository;
     private final LectureRepository lectureRepository;
     private final LectureFileRepository lectureFileRepository;
 
@@ -31,6 +34,8 @@ public class LectureService {
             MultipartFile lectureFile,
             AddLectureRequestDto addLectureRequestDto
     ) throws IOException {
+
+        validateSectionExistence(sectionId);
 
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
         String storedFilename = UUID.randomUUID().toString();
@@ -45,5 +50,12 @@ public class LectureService {
                         lectureId
                 )
         );
+    }
+
+    private void validateSectionExistence(Long sectionId) {
+        boolean sectionExist = sectionRepository.existsById(sectionId);
+        if (!sectionExist) {
+            throw new SectionNotFoundException();
+        }
     }
 }
