@@ -6,8 +6,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "course")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Course {
+public class CourseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +44,7 @@ public class Course {
     @Column(nullable = false)
     private Long memberId;
 
-    private Course(
+    private CourseEntity(
             CourseTitle courseTitle,
             Description description,
             Category category,
@@ -63,7 +64,7 @@ public class Course {
         this.memberId = memberId;
     }
 
-    public static Course createCourse(
+    public static CourseEntity createCourse(
             CourseTitle courseTitle,
             Description description,
             Category category,
@@ -73,6 +74,6 @@ public class Course {
             CourseDuration courseDuration,
             Long memberId
     ) {
-        return new Course(courseTitle, description, category, instructor, price, courseSlug, courseDuration, memberId);
+        return new CourseEntity(courseTitle, description, category, instructor, price, courseSlug, courseDuration, memberId);
     }
 }

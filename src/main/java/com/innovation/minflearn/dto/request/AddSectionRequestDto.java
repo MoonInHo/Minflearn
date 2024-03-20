@@ -1,6 +1,6 @@
 package com.innovation.minflearn.dto.request;
 
-import com.innovation.minflearn.entity.Section;
+import com.innovation.minflearn.entity.SectionEntity;
 import com.innovation.minflearn.enums.SectionNumber;
 import com.innovation.minflearn.vo.section.LearningObjective;
 import com.innovation.minflearn.vo.section.SectionTitle;
@@ -13,12 +13,13 @@ public class AddSectionRequestDto {
     private String sectionTitle;
     private String learningObjective;
 
-    public Section toEntity(Long courseId, SectionNumber sectionNumber) {
-        return Section.createSection(
+    public SectionEntity toEntity(SectionNumber sectionNumber, Long courseId, Long memberId) {
+        return SectionEntity.createSection(
                 sectionNumber,
                 SectionTitle.of(sectionTitle),
                 LearningObjective.of(learningObjective),
-                courseId
+                courseId,
+                memberId
         );
     }
 }

@@ -4,7 +4,7 @@ import com.innovation.minflearn.dto.request.CreateMemberRequestDto;
 import com.innovation.minflearn.repository.member.MemberRepository;
 import com.innovation.minflearn.exception.custom.member.DuplicateEmailException;
 import com.innovation.minflearn.exception.custom.member.DuplicatePhoneException;
-import com.innovation.minflearn.entity.Member;
+import com.innovation.minflearn.entity.MemberEntity;
 import com.innovation.minflearn.vo.member.Email;
 import com.innovation.minflearn.vo.member.Phone;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class MemberService {
         checkDuplicateEmail(createMemberRequestDto);
         checkDuplicatePhone(createMemberRequestDto);
 
-        Member member = createMemberRequestDto.toEntity();
+        MemberEntity member = createMemberRequestDto.toEntity();
         member.encryptPassword(passwordEncoder);
 
         memberRepository.save(member);

@@ -1,7 +1,7 @@
 package com.innovation.minflearn.repository.lecture;
 
-import com.innovation.minflearn.entity.LectureFile;
+import com.innovation.minflearn.entity.LectureFileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LectureFileRepository extends JpaRepository<LectureFile, Long> {
+public interface LectureFileRepository extends JpaRepository<LectureFileEntity, Long> {
 }

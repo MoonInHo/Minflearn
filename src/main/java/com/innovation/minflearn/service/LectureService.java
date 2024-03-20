@@ -1,9 +1,10 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.dto.request.AddLectureRequestDto;
-import com.innovation.minflearn.entity.LectureFile;
+import com.innovation.minflearn.entity.LectureFileEntity;
 import com.innovation.minflearn.repository.lecture.LectureFileRepository;
 import com.innovation.minflearn.repository.lecture.LectureRepository;
+import com.innovation.minflearn.security.JwtAuthProvider;
 import com.innovation.minflearn.vo.lecture.OriginFilename;
 import com.innovation.minflearn.vo.lecture.StoredFilename;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +20,27 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LectureService {
 
+    private final JwtAuthProvider jwtAuthProvider;
     private final LectureRepository lectureRepository;
     private final LectureFileRepository lectureFileRepository;
 
     @Transactional
-    public void addLecture(Long courseId, MultipartFile lectureFile, AddLectureRequestDto addLectureRequestDto) throws IOException {
+    public void addLecture(
+            Long sectionId,
+            String authorizationHeader,
+            MultipartFile lectureFile,
+            AddLectureRequestDto addLectureRequestDto
+    ) throws IOException {
 
-        String originalFilename = lectureFile.getOriginalFilename();
-        String storedFilename = UUID.randomUUID() + "_" + originalFilename;
-        String savePath = "/Users/inhomoon/Downloads/" + storedFilename; //TODO 경로 변경 예정
-        lectureFile.transferTo(new File(savePath));
+        Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
+        String storedFilename = UUID.randomUUID().toString();
+        String savePath = "/Users/inhomoon/Downloads/" + storedFilename; //TODO 각 서버에 맞게 파일 경로를 동적으로 할당하는 코드 구현(로컬, 테스트, 클라우드)
+        lectureFile.transferTo(new File(savePath)); //TODO 파일 분할 업로드 구현
 
-        Long lectureId = lectureRepository.save(addLectureRequestDto.toEntity(courseId)).id();
+        Long lectureId = lectureRepository.save(addLectureRequestDto.toEntity(sectionId, memberId)).id();
         lectureFileRepository.save(
-                LectureFile.createLectureFile(
-                        OriginFilename.of(originalFilename),
+                LectureFileEntity.createLectureFile(
+                        OriginFilename.of(lectureFile.getOriginalFilename()),
                         StoredFilename.of(storedFilename),
                         lectureId
                 )

@@ -22,10 +22,11 @@ public class JwtUtil {
         this.REFRESH_TOKEN_EXPIRE = 1000 * 60 * 60 * 24 * 14;
     }
 
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(String email, Long memberId) {
 
         Claims claims = Jwts.claims();
         claims.put("email", email);
+        claims.put("memberId", memberId);
         //TODO role claim 추가 예정
 
         return Jwts.builder()
@@ -65,10 +66,14 @@ public class JwtUtil {
         return extractClaims(token, SECRET_KEY).get("email", String.class);
     }
 
+    public Long extractMemberId(String token) {
+        return extractClaims(token, SECRET_KEY).get("memberId", Long.class);
+    }
+
     private Claims extractClaims(String token, String secretKey) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
-                .parseClaimsJws(token)
+                .parseClaimsJws(token) //TODO 액세스 토큰 만료시 reissue 메소드에서도 토큰 만료로 인해 접근 할 수 없는 문제 해결
                 .getBody();
     }
 }

@@ -1,6 +1,6 @@
 package com.innovation.minflearn.security;
 
-import com.innovation.minflearn.entity.Member;
+import com.innovation.minflearn.entity.MemberEntity;
 import com.innovation.minflearn.repository.member.MemberRepository;
 import com.innovation.minflearn.vo.member.Email;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,9 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Member member = memberRepository.getMember(Email.of(email))
+        MemberEntity member = memberRepository.getMember(Email.of(email))
                 .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 다시 확인해주세요."));
 
-        return new AccountContext(email, member.password(), member.createRole());
+        return new AccountContext(email, member.password(), member.createRole(), member.id());
     }
 }

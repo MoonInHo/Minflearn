@@ -12,8 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +42,7 @@ public class Member {
     @Column(nullable = false)
     private Role role;
 
-    private Member(
+    private MemberEntity(
             Email email,
             Password password,
             BirthDate birthDate,
@@ -57,7 +58,7 @@ public class Member {
         this.role = role;
     }
 
-    public static Member CreateMember(
+    public static MemberEntity CreateMember(
             Email email,
             Password password,
             BirthDate birthDate,
@@ -65,7 +66,7 @@ public class Member {
             Address address,
             Role role
     ) {
-        return new Member(email, password, birthDate, phone, address, role);
+        return new MemberEntity(email, password, birthDate, phone, address, role);
     }
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {

@@ -8,8 +8,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "section")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Section {
+public class SectionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,26 +29,30 @@ public class Section {
     @Column(nullable = false)
     private Long courseId;
 
-    //TODO 권한 체크를 할 방법에 대해 고민
+    @Column(nullable = false)
+    private Long memberId;
 
-    private Section(
+    private SectionEntity(
             SectionNumber sectionNumber,
             SectionTitle sectionTitle,
             LearningObjective learningObjective,
-            Long courseId
+            Long courseId,
+            Long memberId
     ) {
         this.sectionNumber = sectionNumber;
         this.sectionTitle = sectionTitle;
         this.learningObjective = learningObjective;
         this.courseId = courseId;
+        this.memberId = memberId;
     }
 
-    public static Section createSection(
+    public static SectionEntity createSection(
             SectionNumber sectionNumber,
             SectionTitle sectionTitle,
             LearningObjective learningObjective,
-            Long courseId
+            Long courseId,
+            Long memberId
     ) {
-        return new Section(sectionNumber, sectionTitle, learningObjective, courseId);
+        return new SectionEntity(sectionNumber, sectionTitle, learningObjective, courseId, memberId);
     }
 }
