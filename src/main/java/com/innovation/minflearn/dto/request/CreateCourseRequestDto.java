@@ -1,6 +1,6 @@
 package com.innovation.minflearn.dto.request;
 
-import com.innovation.minflearn.entity.Course;
+import com.innovation.minflearn.entity.CourseEntity;
 import com.innovation.minflearn.enums.Field;
 import com.innovation.minflearn.enums.Occupation;
 import com.innovation.minflearn.vo.course.*;
@@ -21,8 +21,8 @@ public class CreateCourseRequestDto {
     private String courseSlug;
     private Integer courseDuration;
 
-    public Course toEntity(Long memberId) {
-        return Course.createCourse(
+    public CourseEntity toEntity(Long memberId) {
+        return CourseEntity.createCourse(
                 CourseTitle.of(courseTitle),
                 Description.of(description),
                 Category.of(

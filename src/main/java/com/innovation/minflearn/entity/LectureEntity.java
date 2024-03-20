@@ -8,8 +8,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "lecture")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Lecture {
+public class LectureEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,27 +31,33 @@ public class Lecture {
     @Column(nullable = false)
     private Long sectionId;
 
+    @Column(nullable = false)
+    private Long memberId;
+
     //TODO 연관 관계 매핑이 안되어 있으므로 권한 체크를 위해 memberId 를 넣는게 적절한 설계인지 고민
 
-    private Lecture(
+    private LectureEntity(
             LectureTitle lectureTitle,
             LectureDuration lectureDuration,
             UnitId unitId,
-            Long sectionId
+            Long sectionId,
+            Long memberId
     ) {
         this.lectureTitle = lectureTitle;
         this.lectureDuration = lectureDuration;
         this.unitId = unitId;
         this.sectionId = sectionId;
+        this.memberId = memberId;
     }
 
-    public static Lecture createLecture(
+    public static LectureEntity createLecture(
             LectureTitle lectureTitle,
             LectureDuration lectureDuration,
             UnitId unitId,
-            Long sectionId
+            Long sectionId,
+            Long memberId
     ) {
-        return new Lecture(lectureTitle, lectureDuration, unitId, sectionId);
+        return new LectureEntity(lectureTitle, lectureDuration, unitId, sectionId, memberId);
     }
 
     public Long id() {

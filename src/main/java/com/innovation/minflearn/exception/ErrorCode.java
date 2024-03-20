@@ -18,7 +18,12 @@ public enum ErrorCode {
     INVALID_SIGNATURE("서명이 올바르지 않습니다."),
 
     // Section
-    DUPLICATE_SECTION("해당 섹션이 이미 존재합니다.");
+    DUPLICATE_SECTION("해당 섹션이 이미 존재합니다."),
+
+    // Lecture
+    MAX_FILE_COUNT_EXCEEDED("한 강의엔 한개의 파일만 업로드 가능합니다."),
+    INVALID_EXTENSION("확장자 형식이 올바르지 않습니다."),
+    UNSUPPORTED_VIDEO_FILE_EXTENSION("지원하는 비디오 파일 형식이 아닙니다.");
 
     private final String message;
 

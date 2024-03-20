@@ -9,7 +9,10 @@ import java.util.Collection;
 @Getter
 public class AccountContext extends User {
 
-    public AccountContext(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    private final Long memberId;
+
+    public AccountContext(String email, String password, Collection<? extends GrantedAuthority> authorities, Long memberId) {
         super(email, password, authorities);
+        this.memberId = memberId;
     }
 }

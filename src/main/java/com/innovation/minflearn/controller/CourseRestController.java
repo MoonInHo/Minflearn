@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/course")
+@RequestMapping("/api/courses")
 public class CourseRestController {
 
     private final CourseService courseService;
@@ -16,7 +16,7 @@ public class CourseRestController {
     @PostMapping
     public ResponseEntity<Void> createCourse(
             @RequestBody CreateCourseRequestDto createCourseRequestDto,
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestHeader(name = "Authorization") String authorizationHeader
     ) {
         courseService.createCourse(createCourseRequestDto, authorizationHeader);
         return ResponseEntity.ok().build();

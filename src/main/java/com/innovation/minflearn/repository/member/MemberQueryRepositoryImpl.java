@@ -1,6 +1,6 @@
 package com.innovation.minflearn.repository.member;
 
-import com.innovation.minflearn.entity.Member;
+import com.innovation.minflearn.entity.MemberEntity;
 import com.innovation.minflearn.vo.member.Email;
 import com.innovation.minflearn.vo.member.Phone;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.innovation.minflearn.entity.QMember.member;
+import static com.innovation.minflearn.entity.QMemberEntity.memberEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,8 +21,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     public boolean isEmailExist(Email email) {
         return queryFactory
                 .selectOne()
-                .from(member)
-                .where(member.email.eq(email))
+                .from(memberEntity)
+                .where(memberEntity.email.eq(email))
                 .fetchFirst() != null;
     }
 
@@ -30,28 +30,19 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     public boolean isPhoneExist(Phone phone) {
         return queryFactory
                 .selectOne()
-                .from(member)
-                .where(member.phone.eq(phone))
+                .from(memberEntity)
+                .where(memberEntity.phone.eq(phone))
                 .fetchFirst() != null;
     }
 
     @Override
-    public Optional<Member> getMember(Email email) {
+    public Optional<MemberEntity> getMember(Email email) {
 
-        Member result = queryFactory
-                .selectFrom(member)
-                .where(member.email.eq(email))
+        MemberEntity result = queryFactory
+                .selectFrom(memberEntity)
+                .where(memberEntity.email.eq(email))
                 .fetchOne();
 
         return Optional.ofNullable(result);
-    }
-
-    @Override
-    public Long getMemberId(Email email) {
-        return queryFactory
-                .select(member.id)
-                .from(member)
-                .where(member.email.eq(email))
-                .fetchOne();
     }
 }

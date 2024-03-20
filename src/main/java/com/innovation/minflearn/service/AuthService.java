@@ -4,7 +4,7 @@ import com.innovation.minflearn.exception.custom.auth.ExpiredRefreshTokenExcepti
 import com.innovation.minflearn.repository.jwt.RefreshTokenRepository;
 import com.innovation.minflearn.dto.response.TokenDto;
 import com.innovation.minflearn.security.JwtAuthProvider;
-import com.innovation.minflearn.entity.RefreshToken;
+import com.innovation.minflearn.entity.RefreshTokenEntity;
 import com.innovation.minflearn.dto.request.SignInRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +30,7 @@ public class AuthService {
         String accessToken = jwtAuthProvider.generateAccessToken(authentication);
         String refreshToken = jwtAuthProvider.generateRefreshToken();
 
-        refreshTokenRepository.save(new RefreshToken(refreshToken, signInRequestDto.email()));
+        refreshTokenRepository.save(new RefreshTokenEntity(refreshToken, signInRequestDto.email()));
 
         return new TokenDto(accessToken, refreshToken);
     }

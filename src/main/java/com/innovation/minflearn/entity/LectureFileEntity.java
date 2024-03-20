@@ -7,8 +7,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "lecture_file")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LectureFile {
+public class LectureFileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,7 @@ public class LectureFile {
     @Column(nullable = false)
     private Long lectureId;
 
-    private LectureFile(
+    private LectureFileEntity(
             OriginFilename originFilename,
             StoredFilename storedFilename,
             Long lectureId
@@ -35,11 +36,11 @@ public class LectureFile {
         this.lectureId = lectureId;
     }
 
-    public static LectureFile createLectureFile(
+    public static LectureFileEntity createLectureFile(
             OriginFilename originFilename,
             StoredFilename storedFilename,
             Long lectureId
     ) {
-        return new LectureFile(originFilename, storedFilename, lectureId);
+        return new LectureFileEntity(originFilename, storedFilename, lectureId);
     }
 }

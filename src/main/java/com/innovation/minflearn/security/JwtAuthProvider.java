@@ -36,7 +36,7 @@ public class JwtAuthProvider implements AuthenticationProvider {
 
         AccountContext accountContext = (AccountContext) authentication.getPrincipal();
 
-        return jwtUtil.generateAccessToken(accountContext.getUsername());
+        return jwtUtil.generateAccessToken(accountContext.getUsername(), accountContext.getMemberId());
     }
 
     public String generateRefreshToken() {
@@ -47,12 +47,13 @@ public class JwtAuthProvider implements AuthenticationProvider {
 
         String accessToken = jwtUtil.resolveToken(authorizationHeader);
         String email = jwtUtil.extractEmail(accessToken);
+        Long memberId = jwtUtil.extractMemberId(accessToken);
 
-        return jwtUtil.generateAccessToken(email);
+        return jwtUtil.generateAccessToken(email, memberId);
     }
 
-    public String extractEmail(String authorizationHeader) {
-        return jwtUtil.extractEmail(jwtUtil.resolveToken(authorizationHeader));
+    public Long extractMemberId(String authorizationHeader) {
+        return jwtUtil.extractMemberId(jwtUtil.resolveToken(authorizationHeader));
     }
 
     @Override

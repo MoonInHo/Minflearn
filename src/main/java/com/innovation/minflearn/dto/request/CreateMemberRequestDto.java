@@ -1,6 +1,6 @@
 package com.innovation.minflearn.dto.request;
 
-import com.innovation.minflearn.entity.Member;
+import com.innovation.minflearn.entity.MemberEntity;
 import com.innovation.minflearn.enums.Role;
 import com.innovation.minflearn.vo.member.*;
 import lombok.AllArgsConstructor;
@@ -19,8 +19,8 @@ public class CreateMemberRequestDto {
     private String address;
     private String addressDetail;
 
-    public Member toEntity() {
-        return Member.CreateMember(
+    public MemberEntity toEntity() {
+        return MemberEntity.CreateMember(
                 Email.of(email),
                 Password.of(password),
                 BirthDate.of(birthDate),

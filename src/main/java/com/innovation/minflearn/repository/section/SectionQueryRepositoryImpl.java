@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import static com.innovation.minflearn.entity.QSection.section;
+import static com.innovation.minflearn.entity.QSectionEntity.sectionEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -14,13 +14,14 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public boolean isSectionExist(Long courseId, SectionNumber sectionNumber) {
+    public boolean isSectionExist(SectionNumber sectionNumber, Long courseId, Long memberId) {
         return queryFactory
                 .selectOne()
-                .from(section)
+                .from(sectionEntity)
                 .where(
-                        section.courseId.eq(courseId),
-                        section.sectionNumber.eq(sectionNumber)
+                        sectionEntity.sectionNumber.eq(sectionNumber),
+                        sectionEntity.courseId.eq(courseId),
+                        sectionEntity.memberId.eq(memberId)
                 )
                 .fetchFirst() != null;
     }
