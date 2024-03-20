@@ -8,6 +8,7 @@ import com.innovation.minflearn.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -53,6 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/members/sign-up").permitAll()
                         .requestMatchers( "/api/authentication/sign-in").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/courses").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(
