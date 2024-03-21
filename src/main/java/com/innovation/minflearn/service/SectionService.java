@@ -25,7 +25,7 @@ public class SectionService {
             String authorizationHeader,
             AddSectionRequestDto addSectionRequestDto
     ) {
-        validateCourseExistence(courseId);
+        validateCourseExistence(courseId); //TODO section 이 순서대로 생성되도록 변경
 
         SectionNumber sectionNumber = SectionNumber.checkSection(addSectionRequestDto.getSectionNumber());
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);

@@ -34,8 +34,6 @@ public class LectureEntity {
     @Column(nullable = false)
     private Long memberId;
 
-    //TODO 연관 관계 매핑이 안되어 있으므로 권한 체크를 위해 memberId 를 넣는게 적절한 설계인지 고민
-
     private LectureEntity(
             LectureTitle lectureTitle,
             LectureDuration lectureDuration,

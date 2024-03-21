@@ -1,5 +1,6 @@
 package com.innovation.minflearn.repository.cource;
 
+import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,7 +29,7 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                         Projections.constructor(
                                 GetCourseResponseDto.class,
                                 courseEntity.courseTitle.courseTitle,
-                                courseEntity.instructor.Instructor,
+                                courseEntity.instructor.instructor,
                                 courseEntity.price.price
                         )
                 )
@@ -43,5 +44,29 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
         ).orElse(0L);
 
         return new PageImpl<>(fetch, pageable, totalCount);
+    }
+
+    @Override
+    public Optional<CourseDetailResponseDto> getCourseDetail(Long courseId) {
+
+        CourseDetailResponseDto result = queryFactory
+                .select(
+                        Projections.fields(
+                                CourseDetailResponseDto.class,
+                                courseEntity.courseTitle.courseTitle,
+                                courseEntity.description.description,
+                                courseEntity.category.occupation,
+                                courseEntity.category.field,
+                                courseEntity.category.skillTag,
+                                courseEntity.instructor.instructor,
+                                courseEntity.price.price,
+                                courseEntity.courseDuration.courseDuration
+                        )
+                )
+                .from(courseEntity)
+                .where(courseEntity.id.eq(courseId))
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }

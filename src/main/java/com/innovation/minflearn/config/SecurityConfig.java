@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/members/sign-up").permitAll()
                         .requestMatchers( "/api/authentication/sign-in").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/courses").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(
