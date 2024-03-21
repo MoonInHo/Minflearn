@@ -1,7 +1,8 @@
 package com.innovation.minflearn.controller;
 
-import com.innovation.minflearn.dto.response.GetCourseResponseDto;
 import com.innovation.minflearn.dto.request.CreateCourseRequestDto;
+import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
+import com.innovation.minflearn.dto.response.GetCourseResponseDto;
 import com.innovation.minflearn.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,5 +29,12 @@ public class CourseRestController {
     @GetMapping
     public ResponseEntity<Page<GetCourseResponseDto>> getCourses(Pageable pageable) {
         return ResponseEntity.ok().body(courseService.getCourses(pageable));
+    }
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseDetailResponseDto> getCourseDetail(
+            @PathVariable(name = "courseId") Long courseId
+    ) {
+        return ResponseEntity.ok().body(courseService.getCourseDetail(courseId));
     }
 }

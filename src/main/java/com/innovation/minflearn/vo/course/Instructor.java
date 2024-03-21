@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class Instructor {
 
-    private final String Instructor;
+    private final String instructor;
 
     private Instructor(String instructor) {
-        Instructor = instructor;
+        this.instructor = instructor;
     }
 
     public static Instructor of(String instructor) {
