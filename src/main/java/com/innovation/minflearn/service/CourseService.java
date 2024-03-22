@@ -49,4 +49,9 @@ public class CourseService {
 
         return courseDetailResponseDto;
     }
+
+    @Transactional(readOnly = true)
+    public List<GetCourseResponseDto> searchCourses(String keyword) {
+        return courseRepository.getCourses(keyword);
+    }
 }
