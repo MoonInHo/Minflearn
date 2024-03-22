@@ -3,6 +3,7 @@ package com.innovation.minflearn.repository.cource;
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -68,5 +69,31 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                 .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public List<GetCourseResponseDto> getCourses(String keyword) {
+        return queryFactory
+                .select(
+                        Projections.constructor(
+                                GetCourseResponseDto.class,
+                                courseEntity.courseTitle.courseTitle,
+                                courseEntity.instructor.instructor,
+                                courseEntity.price.price
+                        )
+                )
+                .from(courseEntity)
+                .where(
+                        isTitleContains(keyword).or(isInstructorContains(keyword))
+                )
+                .fetch();
+    }
+
+    private BooleanExpression isInstructorContains(String keyword) {
+        return courseEntity.instructor.instructor.contains(keyword);
+    }
+
+    private BooleanExpression isTitleContains(String keyword) {
+        return courseEntity.courseTitle.courseTitle.contains(keyword);
     }
 }
