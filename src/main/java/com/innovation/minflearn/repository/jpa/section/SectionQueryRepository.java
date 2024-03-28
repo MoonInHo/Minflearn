@@ -1,4 +1,4 @@
-package com.innovation.minflearn.repository.section;
+package com.innovation.minflearn.repository.jpa.section;
 
 import com.innovation.minflearn.dto.SectionDto;
 import com.innovation.minflearn.enums.SectionNumber;

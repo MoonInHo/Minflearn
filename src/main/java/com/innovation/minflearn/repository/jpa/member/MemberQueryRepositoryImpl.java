@@ -1,8 +1,9 @@
-package com.innovation.minflearn.repository.member;
+package com.innovation.minflearn.repository.jpa.member;
 
 import com.innovation.minflearn.entity.MemberEntity;
 import com.innovation.minflearn.vo.member.Email;
 import com.innovation.minflearn.vo.member.Phone;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return queryFactory
                 .selectOne()
                 .from(memberEntity)
-                .where(memberEntity.email.eq(email))
+                .where(isEmailEquals(email))
                 .fetchFirst() != null;
     }
 
@@ -31,7 +32,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return queryFactory
                 .selectOne()
                 .from(memberEntity)
-                .where(memberEntity.phone.eq(phone))
+                .where(isPhoneEquals(phone))
                 .fetchFirst() != null;
     }
 
@@ -40,9 +41,17 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 
         MemberEntity result = queryFactory
                 .selectFrom(memberEntity)
-                .where(memberEntity.email.eq(email))
+                .where(isEmailEquals(email))
                 .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    private BooleanExpression isEmailEquals(Email email) {
+        return memberEntity.email.eq(email);
+    }
+
+    private BooleanExpression isPhoneEquals(Phone phone) {
+        return memberEntity.phone.eq(phone);
     }
 }

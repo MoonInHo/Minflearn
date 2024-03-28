@@ -76,4 +76,20 @@ public class CourseEntity {
     ) {
         return new CourseEntity(courseTitle, description, category, instructor, price, courseSlug, courseDuration, memberId);
     }
+
+    public Long id() {
+        return id;
+    }
+
+    public String courseTitle() {
+        return courseTitle.courseTitle();
+    }
+
+    public String instructor() {
+        return instructor.instructor();
+    }
+
+    public Integer price() {
+        return price.price();
+    }
 }

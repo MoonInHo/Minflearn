@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/courses")
@@ -28,9 +26,12 @@ public class CourseRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<Page<GetCourseResponseDto>> getCourses(Pageable pageable) {
-        return ResponseEntity.ok().body(courseService.getCourses(pageable));
+    @GetMapping
+    public ResponseEntity<Page<GetCourseResponseDto>> getCourses(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok().body(courseService.getCourses(keyword, pageable));
     }
 
     @GetMapping("/{courseId}")
@@ -38,12 +39,5 @@ public class CourseRestController {
             @PathVariable(name = "courseId") Long courseId
     ) {
         return ResponseEntity.ok().body(courseService.getCourseDetail(courseId));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<GetCourseResponseDto>> searchCourses(
-            @RequestParam(name = "keyword", required = false) String keyword
-    ) {
-        return ResponseEntity.ok().body(courseService.searchCourses(keyword));
     }
 }

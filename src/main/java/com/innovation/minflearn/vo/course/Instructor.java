@@ -19,4 +19,8 @@ public class Instructor {
         }
         return new Instructor(instructor);
     }
+
+    public String instructor() {
+        return instructor;
+    }
 }

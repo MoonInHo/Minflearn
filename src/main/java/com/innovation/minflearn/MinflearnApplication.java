@@ -9,5 +9,4 @@ public class MinflearnApplication {
     public static void main(String[] args) {
         SpringApplication.run(MinflearnApplication.class, args);
     }
-
 }

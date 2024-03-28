@@ -19,4 +19,8 @@ public class CourseTitle {
         }
         return new CourseTitle(courseTitle);
     }
+
+    public String courseTitle() {
+        return courseTitle;
+    }
 }

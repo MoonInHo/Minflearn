@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "id": {
+      "type": "long"
+    },
+    "courseTitle": {
+      "type": "text",
+      "analyzer" : "korean"
+    },
+    "instructor": {
+      "type": "text",
+      "analyzer" : "korean"
+    },
+    "price": {
+      "type": "integer"
+    }
+  }
+}
