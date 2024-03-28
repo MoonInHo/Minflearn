@@ -1,7 +1,7 @@
 package com.innovation.minflearn.security;
 
 import com.innovation.minflearn.entity.MemberEntity;
-import com.innovation.minflearn.repository.member.MemberRepository;
+import com.innovation.minflearn.repository.jpa.member.MemberRepository;
 import com.innovation.minflearn.vo.member.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

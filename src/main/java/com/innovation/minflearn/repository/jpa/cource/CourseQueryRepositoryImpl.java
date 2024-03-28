@@ -1,4 +1,4 @@
-package com.innovation.minflearn.repository.cource;
+package com.innovation.minflearn.repository.jpa.cource;
 
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
@@ -65,35 +65,13 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                         )
                 )
                 .from(courseEntity)
-                .where(courseEntity.id.eq(courseId))
+                .where(isCourseIdEquals(courseId))
                 .fetchOne();
 
         return Optional.ofNullable(result);
     }
 
-    @Override
-    public List<GetCourseResponseDto> getCourses(String keyword) {
-        return queryFactory
-                .select(
-                        Projections.constructor(
-                                GetCourseResponseDto.class,
-                                courseEntity.courseTitle.courseTitle,
-                                courseEntity.instructor.instructor,
-                                courseEntity.price.price
-                        )
-                )
-                .from(courseEntity)
-                .where(
-                        isTitleContains(keyword).or(isInstructorContains(keyword))
-                )
-                .fetch();
-    }
-
-    private BooleanExpression isInstructorContains(String keyword) {
-        return courseEntity.instructor.instructor.contains(keyword);
-    }
-
-    private BooleanExpression isTitleContains(String keyword) {
-        return courseEntity.courseTitle.courseTitle.contains(keyword);
+    private BooleanExpression isCourseIdEquals(Long courseId) {
+        return courseEntity.id.eq(courseId);
     }
 }

@@ -1,12 +1,15 @@
 package com.innovation.minflearn.service;
 
+import com.innovation.minflearn.document.CourseDocument;
 import com.innovation.minflearn.dto.SectionDto;
 import com.innovation.minflearn.dto.request.CreateCourseRequestDto;
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
+import com.innovation.minflearn.entity.CourseEntity;
 import com.innovation.minflearn.exception.custom.course.CourseNotFoundException;
-import com.innovation.minflearn.repository.cource.CourseRepository;
-import com.innovation.minflearn.repository.section.SectionRepository;
+import com.innovation.minflearn.repository.elasticsearch.CourseSearchRepository;
+import com.innovation.minflearn.repository.jpa.cource.CourseRepository;
+import com.innovation.minflearn.repository.jpa.section.SectionRepository;
 import com.innovation.minflearn.security.JwtAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,7 @@ public class CourseService {
 
     private final JwtAuthProvider jwtAuthProvider;
     private final CourseRepository courseRepository;
+    private final CourseSearchRepository courseSearchRepository;
     private final SectionRepository sectionRepository;
 
     @Transactional
@@ -30,11 +34,16 @@ public class CourseService {
             String authorizationHeader
     ) {
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
-        courseRepository.save(createCourseRequestDto.toEntity(memberId));
+
+        CourseEntity courseEntity = courseRepository.save(createCourseRequestDto.toEntity(memberId));
+        courseSearchRepository.save(CourseDocument.of(courseEntity));
     }
 
     @Transactional(readOnly = true)
-    public Page<GetCourseResponseDto> getCourses(Pageable pageable) {
+    public Page<GetCourseResponseDto> getCourses(String keyword, Pageable pageable) {
+        if (isExistKeyword(keyword)) {
+            return courseSearchRepository.findByCourseTitleOrInstructor(keyword, keyword, pageable);
+        }
         return courseRepository.getCourses(pageable);
     }
 
@@ -50,8 +59,7 @@ public class CourseService {
         return courseDetailResponseDto;
     }
 
-    @Transactional(readOnly = true)
-    public List<GetCourseResponseDto> searchCourses(String keyword) {
-        return courseRepository.getCourses(keyword);
+    private boolean isExistKeyword(String keyword) {
+        return keyword != null && !keyword.isBlank();
     }
 }

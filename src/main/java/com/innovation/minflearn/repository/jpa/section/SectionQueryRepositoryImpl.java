@@ -1,9 +1,10 @@
-package com.innovation.minflearn.repository.section;
+package com.innovation.minflearn.repository.jpa.section;
 
 import com.innovation.minflearn.dto.LectureDto;
 import com.innovation.minflearn.dto.SectionDto;
 import com.innovation.minflearn.enums.SectionNumber;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,9 +26,9 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
                 .selectOne()
                 .from(sectionEntity)
                 .where(
-                        sectionEntity.sectionNumber.eq(sectionNumber),
-                        sectionEntity.courseId.eq(courseId),
-                        sectionEntity.memberId.eq(memberId)
+                        isSectionNumberEquals(sectionNumber),
+                        isCourseIdEquals(courseId),
+                        isMemberIdEquals(memberId)
                 )
                 .fetchFirst() != null;
     }
@@ -45,7 +46,7 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
                         )
                 )
                 .from(sectionEntity)
-                .where(sectionEntity.courseId.eq(courseId))
+                .where(isCourseIdEquals(courseId))
                 .fetch();
 
         for (SectionDto section : sections) {
@@ -66,7 +67,23 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
                 )
         )
                 .from(lectureEntity)
-                .where(lectureEntity.sectionId.eq(sectionId))
+                .where(isSectionIdEquals(sectionId))
                 .fetch();
+    }
+
+    private BooleanExpression isSectionNumberEquals(SectionNumber sectionNumber) {
+        return sectionEntity.sectionNumber.eq(sectionNumber);
+    }
+
+    private BooleanExpression isCourseIdEquals(Long courseId) {
+        return sectionEntity.courseId.eq(courseId);
+    }
+
+    private BooleanExpression isMemberIdEquals(Long memberId) {
+        return sectionEntity.memberId.eq(memberId);
+    }
+
+    private BooleanExpression isSectionIdEquals(Long sectionId) {
+        return lectureEntity.sectionId.eq(sectionId);
     }
 }

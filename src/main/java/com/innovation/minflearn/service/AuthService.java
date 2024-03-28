@@ -1,7 +1,7 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.exception.custom.auth.ExpiredRefreshTokenException;
-import com.innovation.minflearn.repository.jwt.RefreshTokenRepository;
+import com.innovation.minflearn.repository.redis.RefreshTokenRepository;
 import com.innovation.minflearn.dto.response.TokenDto;
 import com.innovation.minflearn.security.JwtAuthProvider;
 import com.innovation.minflearn.entity.RefreshTokenEntity;

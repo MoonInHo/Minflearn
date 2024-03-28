@@ -27,15 +27,26 @@ spring:
       host: 127.0.0.1
       port: 6379
 
+
 server:
   error:
     include-message: always
+
+elasticsearch:
+  username: elastic
+  password: HDjq6vqe6drvNEa7bsO0
 
 logging:
   level:
     org:
       hibernate:
         SQL: debug
+      springframework:
+        data:
+          elasticsearch:
+            client:
+              WIRE: TRACE
 
 jwt:
   secret-key: 1fbb154ceb5ad8f0cf24837f4c0a4f01777a0066baef8c21919f52c72f5db199
+

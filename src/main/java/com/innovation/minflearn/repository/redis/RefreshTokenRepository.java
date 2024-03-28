@@ -1,4 +1,4 @@
-package com.innovation.minflearn.repository.jwt;
+package com.innovation.minflearn.repository.redis;
 
 import com.innovation.minflearn.entity.RefreshTokenEntity;
 import org.springframework.data.repository.CrudRepository;

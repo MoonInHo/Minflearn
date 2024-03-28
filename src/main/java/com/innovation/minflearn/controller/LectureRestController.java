@@ -22,11 +22,11 @@ public class LectureRestController {
     public ResponseEntity<Void> addLecture(
             @PathVariable(name = "sectionId") Long sectionId,
             @RequestHeader(name = "Authorization") String authorizationHeader,
-            @RequestPart(name = "lectureFile") MultipartFile lectureFile,
+            @RequestPart(name = "lectureFile") MultipartFile file,
             @RequestPart(name = "lectureData") AddLectureRequestDto addLectureRequestDto
     ) throws IOException {
-        videoValidator.validateVideoFile(lectureFile);
-        lectureService.addLecture(sectionId, authorizationHeader, lectureFile, addLectureRequestDto);
+        videoValidator.validateVideoFile(file);
+        lectureService.addLecture(sectionId, authorizationHeader, file, addLectureRequestDto);
         return ResponseEntity.ok().build();
     }
 }

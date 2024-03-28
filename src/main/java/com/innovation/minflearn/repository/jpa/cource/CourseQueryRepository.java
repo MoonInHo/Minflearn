@@ -1,4 +1,4 @@
-package com.innovation.minflearn.repository.cource;
+package com.innovation.minflearn.repository.jpa.cource;
 
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
@@ -13,6 +13,4 @@ public interface CourseQueryRepository {
     Page<GetCourseResponseDto> getCourses(Pageable pageable);
 
     Optional<CourseDetailResponseDto> getCourseDetail(Long courseId);
-
-    List<GetCourseResponseDto> getCourses(String keyword);
 }

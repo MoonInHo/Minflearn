@@ -1,7 +1,7 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.dto.request.CreateMemberRequestDto;
-import com.innovation.minflearn.repository.member.MemberRepository;
+import com.innovation.minflearn.repository.jpa.member.MemberRepository;
 import com.innovation.minflearn.exception.custom.member.DuplicateEmailException;
 import com.innovation.minflearn.exception.custom.member.DuplicatePhoneException;
 import com.innovation.minflearn.entity.MemberEntity;
