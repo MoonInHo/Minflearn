@@ -6,15 +6,15 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class SectionDto {
+public class SectionQueryDto {
 
-    private Long id;
+    private Long sectionId;
     private SectionNumber sectionNumber;
     private String sectionTitle;
     private String learningObjective;
-    private List<LectureDto> lectures;
+    private List<LectureQueryDto> lectures;
 
-    public void includeLectures(List<LectureDto> lectures) {
+    public void includeLectures(List<LectureQueryDto> lectures) {
         this.lectures = lectures;
     }
 }

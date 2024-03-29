@@ -13,6 +13,7 @@ public class LectureFileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lecture_file_id")
     private Long id;
 
     @Embedded

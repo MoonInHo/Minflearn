@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sections/{sectionId}/lectures")
+@RequestMapping("/api/courses/lectures")
 public class LectureRestController {
 
     private final VideoValidator videoValidator;
@@ -20,13 +20,12 @@ public class LectureRestController {
 
     @PostMapping
     public ResponseEntity<Void> addLecture(
-            @PathVariable(name = "sectionId") Long sectionId,
             @RequestHeader(name = "Authorization") String authorizationHeader,
             @RequestPart(name = "lectureFile") MultipartFile file,
             @RequestPart(name = "lectureData") AddLectureRequestDto addLectureRequestDto
     ) throws IOException {
         videoValidator.validateVideoFile(file);
-        lectureService.addLecture(sectionId, authorizationHeader, file, addLectureRequestDto);
+        lectureService.addLecture(authorizationHeader, file, addLectureRequestDto);
         return ResponseEntity.ok().build();
     }
 }

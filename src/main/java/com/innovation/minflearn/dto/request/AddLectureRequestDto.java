@@ -7,12 +7,13 @@ import com.innovation.minflearn.vo.lecture.UnitId;
 import org.springframework.web.multipart.MultipartFile;
 
 public record AddLectureRequestDto(
+        Long sectionId,
         String lectureTitle,
         Integer lectureDuration,
         MultipartFile lectureFile
 ) {
 
-    public LectureEntity toEntity(Long sectionId, Long memberId) {
+    public LectureEntity toEntity(Long memberId) {
         return LectureEntity.createLecture(
                 LectureTitle.of(lectureTitle),
                 LectureDuration.of(lectureDuration),

@@ -1,7 +1,7 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.document.CourseDocument;
-import com.innovation.minflearn.dto.SectionDto;
+import com.innovation.minflearn.dto.SectionQueryDto;
 import com.innovation.minflearn.dto.request.CreateCourseRequestDto;
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
@@ -53,7 +53,7 @@ public class CourseService {
         CourseDetailResponseDto courseDetailResponseDto = courseRepository.getCourseDetail(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
-        List<SectionDto> sections = sectionRepository.getSections(courseId);
+        List<SectionQueryDto> sections = sectionRepository.getSections(courseId);
         courseDetailResponseDto.includeSections(sections);
 
         return courseDetailResponseDto;
