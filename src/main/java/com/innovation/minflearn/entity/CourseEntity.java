@@ -4,6 +4,7 @@ import com.innovation.minflearn.vo.course.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.elasticsearch.annotations.CountQuery;
 
 @Entity
 @Table(name = "course")
@@ -12,6 +13,7 @@ public class CourseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private Long id;
 
     @Embedded

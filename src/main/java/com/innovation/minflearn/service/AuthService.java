@@ -75,6 +75,9 @@ public class AuthService {
     }
 
     private boolean isRefreshTokenExist(String refreshToken) {
+        if (refreshToken == null) {
+            return false;
+        }
         return refreshTokenRepository.existsById(refreshToken);
     }
 }

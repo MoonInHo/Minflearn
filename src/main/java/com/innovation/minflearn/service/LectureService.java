@@ -7,7 +7,6 @@ import com.innovation.minflearn.repository.jpa.lecture.LectureFileRepository;
 import com.innovation.minflearn.repository.jpa.lecture.LectureRepository;
 import com.innovation.minflearn.repository.jpa.section.SectionRepository;
 import com.innovation.minflearn.security.JwtAuthProvider;
-import com.innovation.minflearn.validator.VideoValidator;
 import com.innovation.minflearn.vo.lecture.OriginFilename;
 import com.innovation.minflearn.vo.lecture.StoredFilename;
 import lombok.RequiredArgsConstructor;
@@ -32,23 +31,21 @@ public class LectureService {
 
     @Transactional
     public void addLecture(
-            Long sectionId,
             String authorizationHeader,
             MultipartFile file,
             AddLectureRequestDto addLectureRequestDto
     ) throws IOException {
 
-        validateSectionExistence(sectionId);
+        validateSectionExistence(addLectureRequestDto.sectionId()); //TODO enum 클래스로 section 이 자동 생성되게 변환 후 검증 로직을 해당 클래스에 맡길 예정
 
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
 
         //TODO 확장자명 추출 로직 추가
-
         String storedFilename = UUID.randomUUID().toString();
         String savePath = "/Users/inhomoon/Downloads/" + storedFilename; //TODO 각 서버에 맞게 파일 경로를 동적으로 할당하는 코드 구현(로컬, 테스트, 클라우드)
         file.transferTo(new File(savePath)); //TODO 파일 분할 업로드 구현
 
-        Long lectureId = lectureRepository.save(addLectureRequestDto.toEntity(sectionId, memberId)).id();
+        Long lectureId = lectureRepository.save(addLectureRequestDto.toEntity(memberId)).id();
         lectureFileRepository.save(
                 LectureFileEntity.createLectureFile(
                         OriginFilename.of(file.getOriginalFilename()),

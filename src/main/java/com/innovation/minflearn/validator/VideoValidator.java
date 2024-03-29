@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class VideoValidator {
+public class VideoValidator { //EnumClass를 이용하는 방법 고려
 
     private static final List<String> ALLOWED_VIDEO_EXTENSIONS = Arrays.asList(".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv");
 
