@@ -1,7 +1,7 @@
 package com.innovation.minflearn.repository.jpa.section;
 
-import com.innovation.minflearn.dto.LectureQueryDto;
-import com.innovation.minflearn.dto.SectionQueryDto;
+import com.innovation.minflearn.dto.query.LectureQueryDto;
+import com.innovation.minflearn.dto.query.SectionQueryDto;
 import com.innovation.minflearn.enums.SectionNumber;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;

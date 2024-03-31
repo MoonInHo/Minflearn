@@ -1,7 +1,7 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.document.CourseDocument;
-import com.innovation.minflearn.dto.SectionQueryDto;
+import com.innovation.minflearn.dto.query.SectionQueryDto;
 import com.innovation.minflearn.dto.request.CreateCourseRequestDto;
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
@@ -39,7 +39,7 @@ public class CourseService {
         courseSearchRepository.save(CourseDocument.of(courseEntity));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) //TODO elasticsearch 와 RDB 간 데이터 불일치 문제 고민
     public Page<GetCourseResponseDto> getCourses(String keyword, Pageable pageable) {
         if (isExistKeyword(keyword)) {
             return courseSearchRepository.findByCourseTitleOrInstructor(keyword, keyword, pageable);

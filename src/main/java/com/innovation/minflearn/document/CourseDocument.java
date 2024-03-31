@@ -16,7 +16,7 @@ import org.springframework.data.elasticsearch.annotations.*;
 public class CourseDocument {
 
     @Id
-    @Field(type = FieldType.Long)
+    @Field(type = FieldType.Keyword)
     private Long id;
 
     @Field(type = FieldType.Text)

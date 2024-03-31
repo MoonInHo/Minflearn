@@ -1,4 +1,4 @@
-package com.innovation.minflearn.dto;
+package com.innovation.minflearn.dto.query;
 
 import com.innovation.minflearn.enums.SectionNumber;
 import lombok.Getter;
