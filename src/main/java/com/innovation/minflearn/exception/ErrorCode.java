@@ -23,6 +23,7 @@ public enum ErrorCode {
     // Section
     SECTION_NOT_FOUND("존재하지 않는 섹션입니다."),
     DUPLICATE_SECTION("해당 섹션이 이미 존재합니다."),
+    SECTION_LIMIT_EXCEEDED("섹션을 더이상 생성할 수 없습니다."),
 
     // Lecture,
     MAX_FILE_COUNT_EXCEEDED("한 강의엔 한개의 파일만 업로드 가능합니다."),

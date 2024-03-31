@@ -44,7 +44,7 @@ public class LectureService {
             AddLectureRequestDto addLectureRequestDto
     ) throws IOException {
 
-        validateSectionExistence(addLectureRequestDto.sectionId()); //TODO enum 클래스로 section 이 자동 생성되게 변환 후 검증 로직을 해당 클래스에 맡길 예정
+        validateSectionExistence(addLectureRequestDto.sectionId());
 
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
 
@@ -55,7 +55,7 @@ public class LectureService {
 
         storeUploadedFileChunk(file, chunkNumber);
 
-        if (chunkNumber == totalChunks - 1) {
+        if (isLastChunks(chunkNumber, totalChunks)) {
 
             String outputFilename = createOutputFilename(file);
             Path outputFile = createOutputFile(outputFilename);
@@ -77,7 +77,7 @@ public class LectureService {
     }
 
     private void validateSectionExistence(Long sectionId) {
-        boolean sectionExist = sectionRepository.existsById(sectionId);
+        boolean sectionExist = sectionRepository.isSectionExist(sectionId);
         if (!sectionExist) {
             throw new SectionNotFoundException();
         }
@@ -96,12 +96,8 @@ public class LectureService {
         Files.write(filePath, file.getBytes());
     }
 
-    private void mergeChunkFiles(MultipartFile file, int totalChunks, Path outputFile) throws IOException {
-        for (int i = 0; i < totalChunks; i++) {
-            Path chunkFile = Paths.get(uploadDir, file.getOriginalFilename() + ".part" + i);
-            Files.write(outputFile, Files.readAllBytes(chunkFile), StandardOpenOption.APPEND);
-            Files.delete(chunkFile);
-        }
+    private boolean isLastChunks(int chunkNumber, int totalChunks) {
+        return chunkNumber == totalChunks - 1;
     }
 
     private String createOutputFilename(MultipartFile file) {
@@ -112,5 +108,13 @@ public class LectureService {
     private Path createOutputFile(String outputFilename) throws IOException {
         Path outputFile = Paths.get(uploadDir, outputFilename);
         return Files.createFile(outputFile);
+    }
+
+    private void mergeChunkFiles(MultipartFile file, int totalChunks, Path outputFile) throws IOException {
+        for (int i = 0; i < totalChunks; i++) {
+            Path chunkFile = Paths.get(uploadDir, file.getOriginalFilename() + ".part" + i);
+            Files.write(outputFile, Files.readAllBytes(chunkFile), StandardOpenOption.APPEND);
+            Files.delete(chunkFile);
+        }
     }
 }

@@ -1,30 +1,29 @@
 package com.innovation.minflearn.enums;
 
+import com.innovation.minflearn.exception.custom.section.SectionLimitExceededException;
+
 import java.util.Arrays;
 
 public enum SectionNumber {
 
-    SECTION_ONE("섹션 1"),
-    SECTION_TWO("섹션 2"),
-    SECTION_THREE("섹션 3"),
-    SECTION_FORE("섹션 4"),
-    SECTION_FIVE("섹션 5"),
-    SECTION_SIX("섹션 6"),
-    SECTION_SEVEN("섹션 7"),
-    SECTION_EIGHT("섹션 8"),
-    SECTION_NINE("섹션 9"),
-    SECTION_TEN("섹션 10");
+    SECTION_1, SECTION_2,
+    SECTION_3, SECTION_4,
+    SECTION_5, SECTION_6,
+    SECTION_7, SECTION_8,
+    SECTION_9, SECTION_10,
+    SECTION_11, SECTION_12,
+    SECTION_13, SECTION_14,
+    SECTION_15, SECTION_16,
+    SECTION_17, SECTION_18,
+    SECTION_19, SECTION_20;
 
-    private final String sectionNumber;
-
-    SectionNumber(String sectionNumber) {
-        this.sectionNumber = sectionNumber;
-    }
-
-    public static SectionNumber checkSection(String sectionNumber) {
+    public static SectionNumber getNextSection(SectionNumber sectionNumber) {
+        if (sectionNumber == null) {
+            return SECTION_1;
+        }
         return Arrays.stream(SectionNumber.values())
-                .filter(sec -> sec.sectionNumber.equals(sectionNumber))
+                .filter(sn -> sn.ordinal() == sectionNumber.ordinal() + 1)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(SectionLimitExceededException::new);
     }
 }

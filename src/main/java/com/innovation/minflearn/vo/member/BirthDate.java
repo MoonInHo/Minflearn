@@ -24,9 +24,9 @@ public class BirthDate {
             throw new IllegalArgumentException("날짜 형식이 올바르지 않습니다.");
         }
 
-        LocalDate birthday = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-        if (birthday.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("미래 날짜는 허용되지 않습니다."); //TODO 대체 문장 고민
+        LocalDate birthdate = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        if (birthdate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("생일은 현재 날짜 이후로 설정할 수 없습니다.");
         }
         return new BirthDate(birthDate);
     }
