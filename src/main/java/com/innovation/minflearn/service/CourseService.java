@@ -39,7 +39,7 @@ public class CourseService {
         courseSearchRepository.save(CourseDocument.of(courseEntity));
     }
 
-    @Transactional(readOnly = true) //TODO elasticsearch 와 RDB 간 데이터 불일치 문제 고민
+    @Transactional(readOnly = true)
     public Page<GetCourseResponseDto> getCourses(String keyword, Pageable pageable) {
         if (isExistKeyword(keyword)) {
             return courseSearchRepository.findByCourseTitleOrInstructor(keyword, keyword, pageable);
@@ -53,7 +53,7 @@ public class CourseService {
         CourseDetailResponseDto courseDetailResponseDto = courseRepository.getCourseDetail(courseId)
                 .orElseThrow(CourseNotFoundException::new);
 
-        List<SectionQueryDto> sections = sectionRepository.getSections(courseId);
+        List<SectionQueryDto> sections = sectionRepository.getLecturesBySections(courseId);
         courseDetailResponseDto.includeSections(sections);
 
         return courseDetailResponseDto;

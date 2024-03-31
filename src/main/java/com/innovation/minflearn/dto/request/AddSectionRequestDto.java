@@ -6,7 +6,6 @@ import com.innovation.minflearn.vo.section.LearningObjective;
 import com.innovation.minflearn.vo.section.SectionTitle;
 
 public record AddSectionRequestDto(
-        String sectionNumber,
         String sectionTitle,
         String learningObjective
 ) {

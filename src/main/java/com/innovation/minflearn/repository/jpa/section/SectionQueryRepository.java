@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface SectionQueryRepository {
 
-    boolean isSectionExist(SectionNumber sectionNumber, Long courseId, Long memberId);
+    SectionNumber getLastSectionNumber(Long courseId);
 
-    List<SectionQueryDto> getSections(Long courseId);
+    boolean isSectionExist(Long sectionId);
+
+    List<SectionQueryDto> getLecturesBySections(Long courseId);
 }

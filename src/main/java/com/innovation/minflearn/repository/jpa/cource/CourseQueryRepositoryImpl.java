@@ -23,6 +23,16 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public boolean isCourseExist(Long courseId) {
+        return queryFactory
+                .selectOne()
+                .from(courseEntity)
+                .where(isCourseIdEquals(courseId))
+                .fetchFirst() != null;
+    }
+
+
+    @Override
     public Page<GetCourseResponseDto> getCourses(Pageable pageable) {
 
         List<GetCourseResponseDto> fetch = queryFactory

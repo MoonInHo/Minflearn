@@ -23,26 +23,28 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public boolean isSectionExist(SectionNumber sectionNumber, Long courseId, Long memberId) {
+    public SectionNumber getLastSectionNumber(Long courseId) {
         return queryFactory
-                .selectOne()
+                .select(sectionEntity.sectionNumber)
                 .from(sectionEntity)
-                .where(
-                        isSectionNumberEquals(sectionNumber),
-                        isCourseIdEquals(courseId),
-                        isMemberIdEquals(memberId)
-                )
-                .fetchFirst() != null;
-    }
-
-    private BooleanExpression isSectionNumberEquals(SectionNumber sectionNumber) {
-        return sectionEntity.sectionNumber.eq(sectionNumber);
+                .where(isCourseIdEquals(courseId))
+                .orderBy(sectionEntity.id.desc())
+                .fetchFirst();
     }
 
     @Override
-    public List<SectionQueryDto> getSections(Long courseId) {
+    public boolean isSectionExist(Long sectionId) {
+        return queryFactory
+                .selectOne()
+                .from(sectionEntity)
+                .where(isSectionIdEquals(sectionId))
+                .fetchFirst() != null;
+    }
 
-        List<SectionQueryDto> result = getSectionsTest(courseId);
+    @Override
+    public List<SectionQueryDto> getLecturesBySections(Long courseId) {
+
+        List<SectionQueryDto> result = getSections(courseId);
 
         List<Long> sectionIds = result.stream()
                 .map(SectionQueryDto::getSectionId)
@@ -72,7 +74,7 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
         return result;
     }
 
-    private List<SectionQueryDto> getSectionsTest(Long courseId) {
+    private List<SectionQueryDto> getSections(Long courseId) {
         return queryFactory
                 .select(
                         Projections.fields(
@@ -92,7 +94,7 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
         return sectionEntity.courseId.eq(courseId);
     }
 
-    private BooleanExpression isMemberIdEquals(Long memberId) {
-        return sectionEntity.memberId.eq(memberId);
+    private BooleanExpression isSectionIdEquals(Long sectionId) {
+        return sectionEntity.id.eq(sectionId);
     }
 }
