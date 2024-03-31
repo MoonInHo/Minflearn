@@ -1,6 +1,6 @@
 package com.innovation.minflearn.dto.response;
 
-import com.innovation.minflearn.dto.SectionQueryDto;
+import com.innovation.minflearn.dto.query.SectionQueryDto;
 import com.innovation.minflearn.enums.Field;
 import com.innovation.minflearn.enums.Occupation;
 import lombok.Getter;

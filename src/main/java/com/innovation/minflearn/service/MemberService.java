@@ -1,10 +1,10 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.dto.request.CreateMemberRequestDto;
-import com.innovation.minflearn.repository.jpa.member.MemberRepository;
+import com.innovation.minflearn.entity.MemberEntity;
 import com.innovation.minflearn.exception.custom.member.DuplicateEmailException;
 import com.innovation.minflearn.exception.custom.member.DuplicatePhoneException;
-import com.innovation.minflearn.entity.MemberEntity;
+import com.innovation.minflearn.repository.jpa.member.MemberRepository;
 import com.innovation.minflearn.vo.member.Email;
 import com.innovation.minflearn.vo.member.Phone;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +32,14 @@ public class MemberService {
     }
 
     private void checkDuplicateEmail(CreateMemberRequestDto createMemberRequestDto) {
-        boolean emailExist = memberRepository.isEmailExist(Email.of(createMemberRequestDto.getEmail()));
+        boolean emailExist = memberRepository.isEmailExist(Email.of(createMemberRequestDto.email()));
         if (emailExist) {
             throw new DuplicateEmailException();
         }
     }
 
     private void checkDuplicatePhone(CreateMemberRequestDto createMemberRequestDto) {
-        boolean phoneExist = memberRepository.isPhoneExist(Phone.of(createMemberRequestDto.getPhone()));
+        boolean phoneExist = memberRepository.isPhoneExist(Phone.of(createMemberRequestDto.phone()));
         if (phoneExist) {
             throw new DuplicatePhoneException();
         }

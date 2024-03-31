@@ -56,11 +56,11 @@ public class AuthRestController {
     }
 
     private void setAuthorizationHeaderWithAccessToken(HttpServletResponse response, TokenDto tokenDto) {
-        response.setHeader(AUTHORIZATION_HEADER, GRANT_TYPE + " " + tokenDto.getAccessToken());
+        response.setHeader(AUTHORIZATION_HEADER, GRANT_TYPE + " " + tokenDto.accessToken());
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, TokenDto tokenDto) {
-        Cookie refreshTokenCookie = new Cookie("refresh_token", tokenDto.getRefreshToken());
+        Cookie refreshTokenCookie = new Cookie("refresh_token", tokenDto.refreshToken());
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);

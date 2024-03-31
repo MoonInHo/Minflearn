@@ -4,23 +4,20 @@ import com.innovation.minflearn.entity.CourseEntity;
 import com.innovation.minflearn.enums.Field;
 import com.innovation.minflearn.enums.Occupation;
 import com.innovation.minflearn.vo.course.*;
-import lombok.Getter;
 
 import java.util.List;
 
-@Getter
-public class CreateCourseRequestDto {
-
-    private String courseTitle;
-    private String description;
-    private String occupation;
-    private String field;
-    private List<String> skillTag;
-    private String instructor;
-    private Integer price;
-    private String courseSlug;
-    private Integer courseDuration;
-
+public record CreateCourseRequestDto(
+        String courseTitle,
+        String description,
+        String occupation,
+        String field,
+        List<String> skillTag,
+        String instructor,
+        Integer price,
+        String courseSlug,
+        Integer courseDuration
+) {
     public CourseEntity toEntity(Long memberId) {
         return CourseEntity.createCourse(
                 CourseTitle.of(courseTitle),
