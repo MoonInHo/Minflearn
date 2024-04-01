@@ -13,4 +13,6 @@ public interface MemberQueryRepository {
     boolean isPhoneExist(Phone phone);
 
     Optional<MemberEntity> getMember(Email email);
+
+    Email getEmail(Long memberId);
 }

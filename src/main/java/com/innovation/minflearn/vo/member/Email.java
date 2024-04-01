@@ -22,4 +22,8 @@ public class Email {
         }
         return new Email(email);
     }
+
+    public String email() {
+        return email;
+    }
 }

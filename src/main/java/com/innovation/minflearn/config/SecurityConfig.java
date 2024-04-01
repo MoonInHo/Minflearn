@@ -1,5 +1,6 @@
 package com.innovation.minflearn.config;
 
+//import com.innovation.minflearn.exception.handler.filter.ExceptionHandlerFilter;
 import com.innovation.minflearn.exception.handler.filter.ExceptionHandlerFilter;
 import com.innovation.minflearn.security.JwtAccessDeniedHandler;
 import com.innovation.minflearn.security.JwtAuthenticationEntryPoint;
@@ -53,7 +54,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/members/sign-up").permitAll()
-                        .requestMatchers( "/api/authentication/sign-in").permitAll()
+                        .requestMatchers("/api/authentication/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                         .anyRequest().authenticated()
                 )

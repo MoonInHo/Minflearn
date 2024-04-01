@@ -1,6 +1,7 @@
 package com.innovation.minflearn.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,23 +38,24 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateRefreshToken() {
+    public String generateRefreshToken(Long memberId) {
+
+        Claims claims = Jwts.claims();
+        claims.put("memberId", memberId);
 
         return Jwts.builder()
+                .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 
-    public String resolveToken(String authorizationHeader) {
-
-        String GRANT_TYPE = "Bearer";
-
-        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(GRANT_TYPE)) {
-            return authorizationHeader.substring(7);
+    public String resolveToken(String token) {
+        if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
+            return token.substring(7);
         }
-        return null;
+        return token;
     }
 
     public boolean isExpired(String token) {
@@ -62,15 +64,15 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public String extractEmail(String token) {
+    public String extractEmail(String token) throws ExpiredJwtException {
         return extractClaims(token, SECRET_KEY).get("email", String.class);
     }
 
-    public Long extractMemberId(String token) {
+    public Long extractMemberId(String token) throws ExpiredJwtException {
         return extractClaims(token, SECRET_KEY).get("memberId", Long.class);
     }
 
-    private Claims extractClaims(String token, String secretKey) {
+    private Claims extractClaims(String token, String secretKey) throws ExpiredJwtException {
         return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token) //TODO 액세스 토큰 만료시 reissue 메소드에서도 토큰 만료로 인해 접근 할 수 없는 문제 해결

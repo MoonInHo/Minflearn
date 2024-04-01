@@ -47,11 +47,24 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return Optional.ofNullable(result);
     }
 
+    @Override
+    public Email getEmail(Long memberId) {
+        return queryFactory
+                .select(memberEntity.email)
+                .from(memberEntity)
+                .where(isMemberIdEquals(memberId))
+                .fetchOne();
+    }
+
     private BooleanExpression isEmailEquals(Email email) {
         return memberEntity.email.eq(email);
     }
 
     private BooleanExpression isPhoneEquals(Phone phone) {
         return memberEntity.phone.eq(phone);
+    }
+
+    private BooleanExpression isMemberIdEquals(Long memberId) {
+        return memberEntity.id.eq(memberId);
     }
 }
