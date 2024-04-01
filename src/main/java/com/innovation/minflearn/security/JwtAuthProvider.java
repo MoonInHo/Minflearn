@@ -39,21 +39,16 @@ public class JwtAuthProvider implements AuthenticationProvider {
         return jwtUtil.generateAccessToken(accountContext.getUsername(), accountContext.getMemberId());
     }
 
-    public String generateRefreshToken() {
-        return jwtUtil.generateRefreshToken();
+    public String generateRefreshToken(Long memberId) {
+        return jwtUtil.generateRefreshToken(memberId);
     }
 
-    public String reissueAccessToken(String authorizationHeader) {
-
-        String accessToken = jwtUtil.resolveToken(authorizationHeader);
-        String email = jwtUtil.extractEmail(accessToken);
-        Long memberId = jwtUtil.extractMemberId(accessToken);
-
+    public String reissueAccessToken(Long memberId, String email) {
         return jwtUtil.generateAccessToken(email, memberId);
     }
 
-    public Long extractMemberId(String authorizationHeader) {
-        return jwtUtil.extractMemberId(jwtUtil.resolveToken(authorizationHeader));
+    public Long extractMemberId(String token) {
+        return jwtUtil.extractMemberId(jwtUtil.resolveToken(token));
     }
 
     @Override

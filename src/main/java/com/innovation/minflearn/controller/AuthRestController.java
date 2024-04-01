@@ -45,10 +45,9 @@ public class AuthRestController {
     @PostMapping("/reissue")
     public ResponseEntity<Void> reissue(
             HttpServletResponse response,
-            @RequestHeader("Authorization") String authorizationHeader,
-            @CookieValue("refresh_token") String refreshTokenCookie
+            @CookieValue("refresh_token") String refreshToken
     ) {
-        TokenDto tokenDto = authService.reissue(authorizationHeader, refreshTokenCookie);
+        TokenDto tokenDto = authService.reissue(refreshToken);
 
         setAuthorizationHeaderWithAccessToken(response, tokenDto);
 
