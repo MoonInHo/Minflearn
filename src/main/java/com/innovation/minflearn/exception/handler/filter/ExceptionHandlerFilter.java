@@ -3,10 +3,7 @@ package com.innovation.minflearn.exception.handler.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innovation.minflearn.exception.ErrorCode;
 import com.innovation.minflearn.exception.ErrorResponseDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,19 +31,17 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            log.error(ErrorCode.EXPIRED_ACCESS_TOKEN.name());
-            setJwtFilterException(response, ErrorCode.EXPIRED_ACCESS_TOKEN, ErrorCode.EXPIRED_ACCESS_TOKEN.getMessage());
+            handleJwtError(ErrorCode.EXPIRED_ACCESS_TOKEN, response);
         } catch (SignatureException e) {
-            log.error(ErrorCode.INVALID_SIGNATURE.name());
-            setJwtFilterException(response, ErrorCode.INVALID_SIGNATURE, ErrorCode.INVALID_SIGNATURE.getMessage());
+            handleJwtError(ErrorCode.INVALID_SIGNATURE, response);
+        } catch (MalformedJwtException e) {
+            handleJwtError(ErrorCode.MALFORMED_JWT, response);
+        } catch (UnsupportedJwtException e) {
+            handleJwtError(ErrorCode.UNSUPPORTED_JWT, response);
         }
     }
 
-    private void setJwtFilterException(
-            HttpServletResponse response,
-            ErrorCode errorCode,
-            String message
-    ) throws IOException {
+    private void setJwtFilterException(HttpServletResponse response, ErrorCode errorCode, String message) throws IOException {
 
         String result = objectMapper.writeValueAsString(new ErrorResponseDto(errorCode, message));
 
@@ -54,5 +49,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(result);
+    }
+
+    private void handleJwtError(ErrorCode errorCode, HttpServletResponse response) throws IOException {
+        log.error(errorCode.name());
+        setJwtFilterException(response, errorCode, errorCode.getMessage());
     }
 }

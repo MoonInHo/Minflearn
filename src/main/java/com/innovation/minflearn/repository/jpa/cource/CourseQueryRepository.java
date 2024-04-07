@@ -14,4 +14,6 @@ public interface CourseQueryRepository {
     Page<GetCourseResponseDto> getCourses(Pageable pageable);
 
     Optional<CourseDetailResponseDto> getCourseDetail(Long courseId);
+
+    boolean isCourseOwner(Long courseId, Long memberId);
 }

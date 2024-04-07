@@ -1,5 +1,7 @@
 package com.innovation.minflearn.repository.jpa.cource;
 
+import com.innovation.minflearn.dto.query.LectureQueryDto;
+import com.innovation.minflearn.dto.query.SectionQueryDto;
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
 import com.querydsl.core.types.Projections;
@@ -12,9 +14,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.innovation.minflearn.entity.QCourseEntity.courseEntity;
+import static com.innovation.minflearn.entity.QLectureEntity.lectureEntity;
+import static com.innovation.minflearn.entity.QSectionEntity.sectionEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,7 +36,6 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                 .where(isCourseIdEquals(courseId))
                 .fetchFirst() != null;
     }
-
 
     @Override
     public Page<GetCourseResponseDto> getCourses(Pageable pageable) {
@@ -60,6 +65,8 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
     @Override
     public Optional<CourseDetailResponseDto> getCourseDetail(Long courseId) {
 
+        List<SectionQueryDto> lecturesBySections = getLecturesBySections(courseId);
+
         CourseDetailResponseDto result = queryFactory
                 .select(
                         Projections.fields(
@@ -78,10 +85,81 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                 .where(isCourseIdEquals(courseId))
                 .fetchOne();
 
+        if (result != null) {
+            result.includeSections(lecturesBySections);
+        }
         return Optional.ofNullable(result);
+    }
+
+    public List<SectionQueryDto> getLecturesBySections(Long courseId) {
+
+        List<SectionQueryDto> result = getSections(courseId);
+
+        List<Long> sectionIds = result.stream()
+                .map(SectionQueryDto::getSectionId)
+                .collect(Collectors.toList());
+
+        List<LectureQueryDto> lectures = queryFactory
+                .select(
+                        Projections.constructor(
+                                LectureQueryDto.class,
+                                lectureEntity.sectionId,
+                                lectureEntity.id.as("lectureId"),
+                                lectureEntity.lectureTitle.lectureTitle,
+                                lectureEntity.lectureDuration.lectureDuration
+                        )
+                )
+                .from(lectureEntity)
+                .join(sectionEntity)
+                .on(lectureEntity.sectionId.eq(sectionEntity.id))
+                .where(sectionEntity.id.in(sectionIds))
+                .fetch();
+
+        Map<Long, List<LectureQueryDto>> lectureMap = lectures.stream()
+                .collect(Collectors.groupingBy(LectureQueryDto::sectionId));
+
+        result.forEach(s -> s.includeLectures(lectureMap.get(s.getSectionId())));
+
+        return result;
+    }
+
+    private List<SectionQueryDto> getSections(Long courseId) {
+        return queryFactory
+                .select(
+                        Projections.fields(
+                                SectionQueryDto.class,
+                                sectionEntity.id.as("sectionId"),
+                                sectionEntity.sectionNumber,
+                                sectionEntity.sectionTitle.sectionTitle,
+                                sectionEntity.learningObjective.learningObjective
+                        )
+                )
+                .from(sectionEntity)
+                .where(isSectionCourseIdEquals(courseId))
+                .fetch();
+    }
+
+    @Override
+    public boolean isCourseOwner(Long courseId, Long memberId) {
+        return queryFactory
+                .selectOne()
+                .from(courseEntity)
+                .where(
+                        isCourseIdEquals(courseId),
+                        isMemberIdEquals(memberId)
+                )
+                .fetchFirst() != null;
     }
 
     private BooleanExpression isCourseIdEquals(Long courseId) {
         return courseEntity.id.eq(courseId);
+    }
+
+    private BooleanExpression isSectionCourseIdEquals(Long courseId) {
+        return sectionEntity.courseId.eq(courseId);
+    }
+
+    private BooleanExpression isMemberIdEquals(Long memberId) {
+        return courseEntity.memberId.eq(memberId);
     }
 }

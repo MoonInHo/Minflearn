@@ -1,16 +1,22 @@
 package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.dto.request.AddLectureRequestDto;
+import com.innovation.minflearn.dto.request.ChunkFileRequestDto;
+import com.innovation.minflearn.entity.LectureCacheEntity;
+import com.innovation.minflearn.entity.LectureEntity;
 import com.innovation.minflearn.entity.LectureFileEntity;
+import com.innovation.minflearn.exception.LectureCacheNotFoundException;
+import com.innovation.minflearn.exception.custom.course.CourseAccessDeniedException;
 import com.innovation.minflearn.exception.custom.section.SectionNotFoundException;
+import com.innovation.minflearn.repository.jpa.cource.CourseRepository;
 import com.innovation.minflearn.repository.jpa.lecture.LectureFileRepository;
 import com.innovation.minflearn.repository.jpa.lecture.LectureRepository;
 import com.innovation.minflearn.repository.jpa.section.SectionRepository;
+import com.innovation.minflearn.repository.redis.LectureCacheRepository;
 import com.innovation.minflearn.security.JwtAuthProvider;
-import com.innovation.minflearn.vo.lecture.OriginFilename;
-import com.innovation.minflearn.vo.lecture.StoredFilename;
+import com.innovation.minflearn.vo.lecture.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +30,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LectureService {
@@ -33,39 +38,65 @@ public class LectureService {
     private String uploadDir;
 
     private final JwtAuthProvider jwtAuthProvider;
+    private final CourseRepository courseRepository;
     private final SectionRepository sectionRepository;
     private final LectureRepository lectureRepository;
     private final LectureFileRepository lectureFileRepository;
+    private final LectureCacheRepository lectureCacheRepository;
 
     @Transactional
-    public boolean addLecture(
+    public void addLecture(
+            Long courseId,
+            Long sectionId,
+            String key,
             String authorizationHeader,
-            MultipartFile file,
             AddLectureRequestDto addLectureRequestDto
-    ) throws IOException {
-
-        validateSectionExistence(addLectureRequestDto.sectionId());
-
+    ) {
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
 
-        createUploadFileDir(uploadDir);
+        verifyCourseOwnership(courseId, memberId);
+        validateSectionExistence(sectionId);
 
-        int chunkNumber = addLectureRequestDto.chunkNumber();
-        int totalChunks = addLectureRequestDto.totalChunks();
+        lectureCacheRepository.save(
+                new LectureCacheEntity(
+                        key,
+                        addLectureRequestDto.lectureTitle(),
+                        addLectureRequestDto.lectureDuration(),
+                        sectionId,
+                        memberId
+                )
+        );
+    }
 
-        storeUploadedFileChunk(file, chunkNumber);
+    @Transactional
+    public boolean uploadChunkFile( //TODO courseId, sectionId 사용 고민
+            Long courseId,
+            Long sectionId,
+            MultipartFile chunkFile,
+            ChunkFileRequestDto chunkFileRequestDto,
+            String key
+    ) throws IOException {
+
+        String tempDir = uploadDir + "/" + key;
+
+        createTempFileDir(tempDir);
+
+        int chunkNumber = chunkFileRequestDto.chunkNumber();
+        int totalChunks = chunkFileRequestDto.totalChunks();
+
+        storeUploadedFileChunk(chunkFile, tempDir, chunkNumber);
 
         if (isLastChunks(chunkNumber, totalChunks)) {
 
-            String outputFilename = createOutputFilename(file);
+            String outputFilename = createOutputFilename(chunkFile);
             Path outputFile = createOutputFile(outputFilename);
 
-            mergeChunkFiles(file, totalChunks, outputFile);
+            mergeChunkFiles(chunkFile, tempDir, totalChunks, outputFile);
 
-            Long lectureId = lectureRepository.save(addLectureRequestDto.toEntity(memberId)).id();
+            Long lectureId = saveLectureInfo(key, courseId, sectionId);
             lectureFileRepository.save(
                     LectureFileEntity.createLectureFile(
-                            OriginFilename.of(file.getOriginalFilename()),
+                            OriginFilename.of(chunkFile.getOriginalFilename()),
                             StoredFilename.of(outputFilename),
                             lectureId
                     )
@@ -76,6 +107,20 @@ public class LectureService {
         }
     }
 
+    public int getLastChunkNumber(Long courseId, Long sectionId, String key) { //TODO courseId, sectionId 사용 고민
+
+        String[] list = getChunkFileList(key);
+
+        return getLastChunkNumber(list);
+    }
+
+    private void verifyCourseOwnership(Long courseId, Long memberId) {
+        boolean courseOwner = courseRepository.isCourseOwner(courseId, memberId);
+        if (!courseOwner) {
+            throw new CourseAccessDeniedException();
+        }
+    }
+
     private void validateSectionExistence(Long sectionId) {
         boolean sectionExist = sectionRepository.isSectionExist(sectionId);
         if (!sectionExist) {
@@ -83,16 +128,14 @@ public class LectureService {
         }
     }
 
-    private void createUploadFileDir(String uploadDir) {
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+    private void createTempFileDir(String tempDir) {
+        File dir = new File(tempDir);
+        dir.mkdirs();
     }
 
-    private void storeUploadedFileChunk(MultipartFile file, int chunkNumber) throws IOException {
+    private void storeUploadedFileChunk(MultipartFile file, String tempDir, int chunkNumber) throws IOException {
         String filename = file.getOriginalFilename() + ".part" + chunkNumber;
-        Path filePath = Paths.get(uploadDir, filename);
+        Path filePath = Paths.get(tempDir, filename);
         Files.write(filePath, file.getBytes());
     }
 
@@ -110,11 +153,43 @@ public class LectureService {
         return Files.createFile(outputFile);
     }
 
-    private void mergeChunkFiles(MultipartFile file, int totalChunks, Path outputFile) throws IOException {
+    private void mergeChunkFiles(
+            MultipartFile file,
+            String tempDir,
+            int totalChunks,
+            Path outputFile
+    ) throws IOException {
         for (int i = 0; i < totalChunks; i++) {
-            Path chunkFile = Paths.get(uploadDir, file.getOriginalFilename() + ".part" + i);
+            Path chunkFile = Paths.get(tempDir, file.getOriginalFilename() + ".part" + i);
             Files.write(outputFile, Files.readAllBytes(chunkFile), StandardOpenOption.APPEND);
-            Files.delete(chunkFile);
         }
+        FileUtils.deleteDirectory(new File(tempDir));
+    }
+
+    private Long saveLectureInfo(String key, Long courseId, Long sectionId) {
+
+        LectureCacheEntity lectureCacheEntity = lectureCacheRepository.findById(key)
+                .orElseThrow(LectureCacheNotFoundException::new);
+
+        LectureEntity lecture = LectureEntity.createLecture(
+                LectureTitle.of(lectureCacheEntity.getLectureTitle()),
+                LectureDuration.of(lectureCacheEntity.getLectureDuration()),
+                UnitId.of(courseId, sectionId),
+                lectureCacheEntity.getSectionId(),
+                lectureCacheEntity.getMemberId()
+        );
+        return lectureRepository.save(lecture).id();
+    }
+
+    private String[] getChunkFileList(String key) {
+        Path temp = Paths.get("Video", key);
+        return temp.toFile().list();
+    }
+
+    private int getLastChunkNumber(String[] list) {
+        if (list == null) {
+            return 0;
+        }
+        return list.length - 1;
     }
 }
