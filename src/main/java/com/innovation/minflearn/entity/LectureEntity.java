@@ -27,7 +27,7 @@ public class LectureEntity {
 
     @Embedded
     @Column(nullable = false)
-    private UnitId unitId;
+    private UnitId unitId; //TODO 해당 필드 사용 여부 고민
 
     @Column(nullable = false)
     private Long sectionId;

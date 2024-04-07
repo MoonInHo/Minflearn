@@ -6,14 +6,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class UnitId {
 
-    private final Integer unitId;
+    private final String unitId;
 
-    private UnitId(Integer unitId) {
+    private UnitId(String unitId) {
         this.unitId = unitId;
     }
 
-    public static UnitId of() {
-        //TODO unitID 생성 조건 설정하기 (ex. 강좌번호 + 섹션번호 + 강의번호)
-        return new UnitId(0);
+    public static UnitId of(Long courseId, Long sectionId) {
+
+        if (courseId == null) {
+            throw new IllegalArgumentException("강좌 번호를 입력하세요.");
+        }
+        if (sectionId == null) {
+            throw new IllegalArgumentException("섹션 번호를 입력하세요.");
+        }
+        return new UnitId(courseId + "-" + sectionId);
     }
 }
