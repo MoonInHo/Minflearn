@@ -32,7 +32,8 @@ public enum ErrorCode {
     MAX_FILE_COUNT_EXCEEDED("한 강의엔 한개의 파일만 업로드 가능합니다."),
     INVALID_EXTENSION("확장자 형식이 올바르지 않습니다."),
     UNSUPPORTED_VIDEO_FILE_EXTENSION("지원하는 비디오 파일 형식이 아닙니다."),
-    LECTURE_CACHE_NOT_FOUND("해당 강의의 캐시 정보를 찾을 수 없습니다.");
+    LECTURE_CACHE_NOT_FOUND("해당 강의의 캐시 정보를 찾을 수 없습니다."),
+    FILE_INTEGRITY_VIOLATION("파일의 변조가 발견되었습니다.");
 
     private final String message;
 
