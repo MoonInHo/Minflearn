@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,9 +28,11 @@ public class LectureRestController {
             @PathVariable(name = "key") String key,
             @RequestHeader(name = "Authorization") String authorizationHeader,
             @RequestPart(name = "file") MultipartFile file,
+            @RequestPart(name = "expectedHash") String expectedHash,
             @RequestPart(name = "lectureData") AddLectureRequestDto addLectureRequestDto
-    ) {
-        videoValidator.validateVideoFile(file);
+    ) throws IOException, NoSuchAlgorithmException {
+
+        videoValidator.validateVideoFile(file, expectedHash);
 
         lectureService.addLecture(courseId, sectionId, key, authorizationHeader, addLectureRequestDto);
 
