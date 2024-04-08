@@ -47,6 +47,9 @@ dependencies {
     // Converter
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
+    // Parser
+    implementation group: 'org.apache.tika', name: 'tika-core', version: '2.7.0'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

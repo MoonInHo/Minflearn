@@ -3,26 +3,26 @@ package com.innovation.minflearn.validator;
 import com.innovation.minflearn.exception.custom.lecture.FileIntegrityViolationException;
 import com.innovation.minflearn.exception.custom.lecture.InvalidExtensionException;
 import com.innovation.minflearn.exception.custom.lecture.UnsupportedVideoFileExtensionException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Component
 public class VideoValidator {
 
     private static final List<String> ALLOWED_VIDEO_EXTENSIONS = Arrays.asList("mp4", "avi", "mov", "wmv", "flv", "mkv");
+    private static final List<String> VIDEO_MIME_TYPES = Arrays.asList("video/mp4", "video/mpeg", "video/mpg", "video/avi", "video/quicktime", "video/x-ms-wmv", "video/x-flv", "video/x-matroska", "video/webm", "video/ogg");
+    private static final Tika tika = new Tika();
 
     public void validateVideoFile(MultipartFile file, String expectedHash) throws IOException, NoSuchAlgorithmException {
 
@@ -37,13 +37,25 @@ public class VideoValidator {
         if (!isContainsVideoFileExtension(extension)) {
             throw new UnsupportedVideoFileExtensionException();
         }
-        if (!isFileIntegrity(file, expectedHash)) {
+
+        if (isFileIntegrity(file)) {
+            throw new FileIntegrityViolationException();
+        }
+        if (isFileIntegrity(file, expectedHash)) {
             throw new FileIntegrityViolationException();
         }
     }
 
     private boolean isContainsVideoFileExtension(String extension) {
         return ALLOWED_VIDEO_EXTENSIONS.contains(extension.toLowerCase());
+    }
+
+    private boolean isFileIntegrity(MultipartFile file) throws IOException {
+
+        InputStream inputStream = file.getInputStream();
+        String mimeType = tika.detect(inputStream);
+
+        return !VIDEO_MIME_TYPES.contains(mimeType.toLowerCase());
     }
 
     private String bytesToHex(byte[] hash) {
@@ -62,6 +74,6 @@ public class VideoValidator {
         byte[] data = file.getBytes();
         byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
         String calculatedHash = bytesToHex(hash);
-        return calculatedHash.equals(expectedHash);
+        return !calculatedHash.equals(expectedHash);
     }
 }

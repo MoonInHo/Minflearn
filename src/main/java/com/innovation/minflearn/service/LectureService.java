@@ -48,7 +48,6 @@ public class LectureService {
     public void addLecture(
             Long courseId,
             Long sectionId,
-            String key,
             String authorizationHeader,
             AddLectureRequestDto addLectureRequestDto
     ) {
@@ -56,6 +55,8 @@ public class LectureService {
 
         verifyCourseOwnership(courseId, memberId);
         validateSectionExistence(sectionId);
+
+        String key = getDirectoryKey(courseId, sectionId);
 
         lectureCacheRepository.save(
                 new LectureCacheEntity(
@@ -73,10 +74,10 @@ public class LectureService {
             Long courseId,
             Long sectionId,
             MultipartFile chunkFile,
-            ChunkFileRequestDto chunkFileRequestDto,
-            String key
+            ChunkFileRequestDto chunkFileRequestDto
     ) throws IOException {
 
+        String key = getDirectoryKey(courseId, sectionId);
         String tempDir = uploadDir + "/" + key;
 
         createTempFileDir(tempDir);
@@ -94,20 +95,17 @@ public class LectureService {
             mergeChunkFiles(chunkFile, tempDir, totalChunks, outputFile);
 
             Long lectureId = saveLectureInfo(key, courseId, sectionId);
-            lectureFileRepository.save(
-                    LectureFileEntity.createLectureFile(
-                            OriginFilename.of(chunkFile.getOriginalFilename()),
-                            StoredFilename.of(outputFilename),
-                            lectureId
-                    )
-            );
+            savaLectureMetadata(chunkFile, outputFilename, lectureId);
+
             return true;
         } else {
             return false;
         }
     }
 
-    public int getLastChunkNumber(Long courseId, Long sectionId, String key) { //TODO courseId, sectionId 사용 고민
+    public int getLastChunkNumber(Long courseId, Long sectionId) { //TODO courseId, sectionId 사용 고민
+
+        String key = getDirectoryKey(courseId, sectionId);
 
         String[] list = getChunkFileList(key);
 
@@ -126,6 +124,10 @@ public class LectureService {
         if (!sectionExist) {
             throw new SectionNotFoundException();
         }
+    }
+
+    private String getDirectoryKey(Long courseId, Long sectionId) {
+        return courseId + "-" + sectionId;
     }
 
     private void createTempFileDir(String tempDir) {
@@ -179,6 +181,16 @@ public class LectureService {
                 lectureCacheEntity.getMemberId()
         );
         return lectureRepository.save(lecture).id();
+    }
+
+    private void savaLectureMetadata(MultipartFile chunkFile, String outputFilename, Long lectureId) {
+        lectureFileRepository.save(
+                LectureFileEntity.createLectureFile(
+                        OriginFilename.of(chunkFile.getOriginalFilename()),
+                        StoredFilename.of(outputFilename),
+                        lectureId
+                )
+        );
     }
 
     private String[] getChunkFileList(String key) {
