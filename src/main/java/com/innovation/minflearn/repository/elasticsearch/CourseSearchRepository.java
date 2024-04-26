@@ -10,5 +10,5 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface CourseSearchRepository extends ElasticsearchRepository<CourseDocument, Long> {
 
     @Query("{\"bool\": {\"should\": [{\"match_phrase\": {\"courseTitle\": \"?0\"}},{\"match_phrase\": {\"instructor\": \"?0\"}}]}}")
-    Page<GetCourseResponseDto> findByCourseTitleOrInstructor(String keyword, Pageable pageable); //TODO spring data elasticsearch @Query 문법 확인 후 custom query 작성
+    Page<GetCourseResponseDto> findByCourseTitleOrInstructor(String keyword, Pageable pageable);
 }

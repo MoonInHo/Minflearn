@@ -33,7 +33,7 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
         return queryFactory
                 .selectOne()
                 .from(courseEntity)
-                .where(isCourseIdEquals(courseId))
+                .where(courseEntity.id.eq(courseId))
                 .fetchFirst() != null;
     }
 
@@ -82,10 +82,10 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                         )
                 )
                 .from(courseEntity)
-                .where(isCourseIdEquals(courseId))
+                .where(courseEntity.id.eq(courseId))
                 .fetchOne();
 
-        if (result != null) {
+        if (result != null && !lecturesBySections.isEmpty()) {
             result.includeSections(lecturesBySections);
         }
         return Optional.ofNullable(result);
@@ -105,8 +105,7 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                                 LectureQueryDto.class,
                                 lectureEntity.sectionId,
                                 lectureEntity.id.as("lectureId"),
-                                lectureEntity.lectureTitle.lectureTitle,
-                                lectureEntity.lectureDuration.lectureDuration
+                                lectureEntity.lectureTitle.lectureTitle
                         )
                 )
                 .from(lectureEntity)
@@ -135,7 +134,7 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                         )
                 )
                 .from(sectionEntity)
-                .where(isSectionCourseIdEquals(courseId))
+                .where(sectionEntity.courseId.eq(courseId))
                 .fetch();
     }
 
@@ -145,21 +144,9 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                 .selectOne()
                 .from(courseEntity)
                 .where(
-                        isCourseIdEquals(courseId),
-                        isMemberIdEquals(memberId)
+                        courseEntity.id.eq(courseId),
+                        courseEntity.memberId.eq(memberId)
                 )
                 .fetchFirst() != null;
-    }
-
-    private BooleanExpression isCourseIdEquals(Long courseId) {
-        return courseEntity.id.eq(courseId);
-    }
-
-    private BooleanExpression isSectionCourseIdEquals(Long courseId) {
-        return sectionEntity.courseId.eq(courseId);
-    }
-
-    private BooleanExpression isMemberIdEquals(Long memberId) {
-        return courseEntity.memberId.eq(memberId);
     }
 }

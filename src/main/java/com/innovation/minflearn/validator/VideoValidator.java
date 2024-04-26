@@ -24,7 +24,7 @@ public class VideoValidator {
     private static final List<String> VIDEO_MIME_TYPES = Arrays.asList("video/mp4", "video/mpeg", "video/mpg", "video/avi", "video/quicktime", "video/x-ms-wmv", "video/x-flv", "video/x-matroska", "video/webm", "video/ogg");
     private static final Tika tika = new Tika();
 
-    public void validateVideoFile(MultipartFile file, String expectedHash) throws IOException, NoSuchAlgorithmException {
+    public void validateVideoFile(MultipartFile file) throws IOException {
 
         if (file.isEmpty()) {
             throw new IllegalArgumentException("비디오 파일을 첨부해주세요.");
@@ -37,10 +37,12 @@ public class VideoValidator {
         if (!isContainsVideoFileExtension(extension)) {
             throw new UnsupportedVideoFileExtensionException();
         }
-
         if (isFileIntegrity(file)) {
             throw new FileIntegrityViolationException();
         }
+    }
+
+    public void validateFileIntegrity(MultipartFile file, String expectedHash) throws IOException, NoSuchAlgorithmException {
         if (isFileIntegrity(file, expectedHash)) {
             throw new FileIntegrityViolationException();
         }

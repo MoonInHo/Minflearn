@@ -6,7 +6,6 @@ public record LectureQueryDto(
         @JsonIgnore
         Long sectionId,
         Long lectureId,
-        String lectureTitle,
-        Integer lectureDuration
+        String lectureTitle
 ) {
 }
