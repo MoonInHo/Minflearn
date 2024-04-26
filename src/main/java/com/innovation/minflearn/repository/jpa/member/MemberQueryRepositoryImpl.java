@@ -23,7 +23,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return queryFactory
                 .selectOne()
                 .from(memberEntity)
-                .where(isEmailEquals(email))
+                .where(memberEntity.email.eq(email))
                 .fetchFirst() != null;
     }
 
@@ -32,7 +32,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return queryFactory
                 .selectOne()
                 .from(memberEntity)
-                .where(isPhoneEquals(phone))
+                .where(memberEntity.phone.eq(phone))
                 .fetchFirst() != null;
     }
 
@@ -41,7 +41,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 
         MemberEntity result = queryFactory
                 .selectFrom(memberEntity)
-                .where(isEmailEquals(email))
+                .where(memberEntity.email.eq(email))
                 .fetchOne();
 
         return Optional.ofNullable(result);
@@ -52,19 +52,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return queryFactory
                 .select(memberEntity.email)
                 .from(memberEntity)
-                .where(isMemberIdEquals(memberId))
+                .where(memberEntity.id.eq(memberId))
                 .fetchOne();
-    }
-
-    private BooleanExpression isEmailEquals(Email email) {
-        return memberEntity.email.eq(email);
-    }
-
-    private BooleanExpression isPhoneEquals(Phone phone) {
-        return memberEntity.phone.eq(phone);
-    }
-
-    private BooleanExpression isMemberIdEquals(Long memberId) {
-        return memberEntity.id.eq(memberId);
     }
 }

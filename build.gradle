@@ -28,7 +28,7 @@ dependencies {
 
     // DB
     runtimeOnly 'com.h2database:h2' // H2 DataBase
-    implementation 'org.springframework.data:spring-data-elasticsearch' // Elastic Search
+    implementation 'org.springframework.data:spring-data-elasticsearch' // Elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Redis
 
     // ORM
@@ -63,7 +63,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-def querydslDir = "$buildDir/generated/querydsl" // TODO deprecate 된 경로 변경
+def querydslDir = "$rootDir/generated/querydsl"
 
 sourceSets {
     main.java.srcDir querydslDir

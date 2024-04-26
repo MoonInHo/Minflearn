@@ -24,24 +24,35 @@ public class LectureFileEntity {
     @Column(nullable = false)
     private StoredFilename storedFilename;
 
+//    @Embedded
+//    @Column(nullable = false)
+//    private LectureDuration lectureDuration;
+
     @Column(nullable = false)
+    private Long courseId;
+
+    @Column
     private Long lectureId;
 
     private LectureFileEntity(
             OriginFilename originFilename,
             StoredFilename storedFilename,
-            Long lectureId
+            Long courseId
     ) {
         this.originFilename = originFilename;
         this.storedFilename = storedFilename;
-        this.lectureId = lectureId;
+        this.courseId = courseId;
     }
 
     public static LectureFileEntity createLectureFile(
             OriginFilename originFilename,
             StoredFilename storedFilename,
-            Long lectureId
+            Long courseId
     ) {
-        return new LectureFileEntity(originFilename, storedFilename, lectureId);
+        return new LectureFileEntity(originFilename, storedFilename, courseId);
+    }
+
+    public Long id() {
+        return id;
     }
 }
