@@ -24,12 +24,12 @@ public class CourseService {
     private final CourseSearchRepository courseSearchRepository;
 
     @Transactional
-    public void createCourse( // 강좌 생성에 실패한다면? // 도중에 실패한다면? // 다른 개발자가 코드를 착각할 가능성
+    public void createCourse(
             CreateCourseRequestDto createCourseRequestDto,
             String authorizationHeader
     ) {
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
-        saveCourseInfo(createCourseRequestDto, memberId); // 메소드를 합치면서 생길 수 있는 문제 고민
+        saveCourseInfo(createCourseRequestDto, memberId);
     }
 
     @Transactional(readOnly = true)

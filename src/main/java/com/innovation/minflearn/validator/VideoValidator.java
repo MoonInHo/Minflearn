@@ -42,8 +42,8 @@ public class VideoValidator {
         }
     }
 
-    public void validateFileIntegrity(MultipartFile file, String expectedHash) throws IOException, NoSuchAlgorithmException {
-        if (isFileIntegrity(file, expectedHash)) {
+    public void validateFileIntegrity(MultipartFile file, String checksum) throws IOException, NoSuchAlgorithmException {
+        if (isFileIntegrity(file, checksum)) {
             throw new FileIntegrityViolationException();
         }
     }
@@ -72,10 +72,10 @@ public class VideoValidator {
         return hexString.toString();
     }
 
-    private boolean isFileIntegrity(MultipartFile file, String expectedHash) throws IOException, NoSuchAlgorithmException {
+    private boolean isFileIntegrity(MultipartFile file, String checksum) throws IOException, NoSuchAlgorithmException {
         byte[] data = file.getBytes();
         byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
         String calculatedHash = bytesToHex(hash);
-        return !calculatedHash.equals(expectedHash);
+        return !calculatedHash.equals(checksum);
     }
 }

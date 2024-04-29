@@ -75,7 +75,7 @@ public class JwtUtil {
     private Claims extractClaims(String token, String secretKey) throws ExpiredJwtException {
         return Jwts.parser()
                 .setSigningKey(secretKey)
-                .parseClaimsJws(token) //TODO 액세스 토큰 만료시 reissue 메소드에서도 토큰 만료로 인해 접근 할 수 없는 문제 해결
+                .parseClaimsJws(token)
                 .getBody();
     }
 }
