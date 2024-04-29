@@ -8,7 +8,7 @@ public record UploadLectureFileUrlResponseDto(
             Long lectureFileId
     ) {
         return new UploadLectureFileUrlResponseDto(
-                "/api/courses/" + courseId + "/lecture-file/" + lectureFileId
+                "/api/courses/" + courseId + "/lecture-file/" + lectureFileId + "/chunks"
         );
     }
 }
