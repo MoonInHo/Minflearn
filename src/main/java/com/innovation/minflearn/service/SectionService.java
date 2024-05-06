@@ -2,7 +2,7 @@ package com.innovation.minflearn.service;
 
 import com.innovation.minflearn.dto.request.AddSectionRequestDto;
 import com.innovation.minflearn.enums.SectionNumber;
-import com.innovation.minflearn.exception.custom.course.CourseNotFoundException;
+import com.innovation.minflearn.exception.custom.course.CourseAccessDeniedException;
 import com.innovation.minflearn.repository.jpa.cource.CourseRepository;
 import com.innovation.minflearn.repository.jpa.section.SectionRepository;
 import com.innovation.minflearn.security.JwtAuthProvider;
@@ -24,19 +24,19 @@ public class SectionService {
             String authorizationHeader,
             AddSectionRequestDto addSectionRequestDto
     ) {
-        validateCourseExistence(courseId);
-
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
+
+        verifyCourseOwnership(courseId, memberId);
 
         SectionNumber lastSectionNumber = sectionRepository.getLastSectionNumber(courseId);
         SectionNumber sectionNumber = SectionNumber.getNextSection(lastSectionNumber);
-        sectionRepository.save(addSectionRequestDto.toEntity(sectionNumber, courseId, memberId));
+        sectionRepository.save(addSectionRequestDto.toEntity(sectionNumber, courseId));
     }
 
-    private void validateCourseExistence(Long courseId) {
-        boolean courseExist = courseRepository.isCourseExist(courseId);
-        if (!courseExist) {
-            throw new CourseNotFoundException();
+    private void verifyCourseOwnership(Long courseId, Long memberId) {
+        boolean courseOwner = courseRepository.isCourseOwner(courseId, memberId);
+        if (!courseOwner) {
+            throw new CourseAccessDeniedException();
         }
     }
 }

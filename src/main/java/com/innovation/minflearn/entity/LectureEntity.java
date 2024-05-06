@@ -1,5 +1,6 @@
 package com.innovation.minflearn.entity;
 
+import com.innovation.minflearn.vo.lecture.LectureContent;
 import com.innovation.minflearn.vo.lecture.LectureTitle;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -19,28 +20,32 @@ public class LectureEntity {
     @Column(nullable = false)
     private LectureTitle lectureTitle;
 
+    @Embedded
+    private LectureContent lectureContent;
+
     @Column(nullable = false)
     private Long sectionId;
 
-    @Column(nullable = false)
-    private Long memberId;
+    private Long lectureFileId;
 
-    private LectureEntity(
+    public LectureEntity(
             LectureTitle lectureTitle,
-            Long sectionId,
-            Long memberId
+            Long sectionId
     ) {
         this.lectureTitle = lectureTitle;
         this.sectionId = sectionId;
-        this.memberId = memberId;
     }
 
     public static LectureEntity createLecture(
             LectureTitle lectureTitle,
-            Long sectionId,
-            Long memberId
+            Long sectionId
     ) {
-        return new LectureEntity(lectureTitle, sectionId, memberId);
+        return new LectureEntity(lectureTitle, sectionId);
+    }
+
+    public void editLectureContent(LectureContent lectureContent, Long lectureFileId) {
+        this.lectureContent = lectureContent;
+        this.lectureFileId = lectureFileId;
     }
 
     public Long id() {

@@ -6,11 +6,10 @@ import com.innovation.minflearn.vo.lecture.LectureTitle;
 public record AddLectureRequestDto(
         String lectureTitle
 ) {
-    public LectureEntity toEntity(Long sectionId, Long memberId) {
+    public LectureEntity toEntity(Long sectionId) {
         return LectureEntity.createLecture(
                 LectureTitle.of(lectureTitle),
-                sectionId,
-                memberId
+                sectionId
         );
     }
 }

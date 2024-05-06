@@ -1,4 +1,4 @@
-package com.innovation.minflearn.exception.custom.lecture;
+package com.innovation.minflearn.exception.custom.lecturefile;
 
 import com.innovation.minflearn.exception.ApplicationException;
 import com.innovation.minflearn.exception.ErrorCode;

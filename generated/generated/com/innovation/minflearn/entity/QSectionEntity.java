@@ -28,8 +28,6 @@ public class QSectionEntity extends EntityPathBase<SectionEntity> {
 
     public final com.innovation.minflearn.vo.section.QLearningObjective learningObjective;
 
-    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
-
     public final EnumPath<com.innovation.minflearn.enums.SectionNumber> sectionNumber = createEnum("sectionNumber", com.innovation.minflearn.enums.SectionNumber.class);
 
     public final com.innovation.minflearn.vo.section.QSectionTitle sectionTitle;

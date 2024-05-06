@@ -31,9 +31,6 @@ public class LectureFileEntity {
     @Column(nullable = false)
     private Long courseId;
 
-    @Column
-    private Long lectureId;
-
     private LectureFileEntity(
             OriginFilename originFilename,
             StoredFilename storedFilename,
