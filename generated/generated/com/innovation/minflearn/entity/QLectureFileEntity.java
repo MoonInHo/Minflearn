@@ -26,8 +26,6 @@ public class QLectureFileEntity extends EntityPathBase<LectureFileEntity> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> lectureId = createNumber("lectureId", Long.class);
-
     public final com.innovation.minflearn.vo.lecture.QOriginFilename originFilename;
 
     public final com.innovation.minflearn.vo.lecture.QStoredFilename storedFilename;

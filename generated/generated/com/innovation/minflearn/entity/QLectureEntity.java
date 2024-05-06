@@ -24,9 +24,11 @@ public class QLectureEntity extends EntityPathBase<LectureEntity> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final com.innovation.minflearn.vo.lecture.QLectureTitle lectureTitle;
+    public final com.innovation.minflearn.vo.lecture.QLectureContent lectureContent;
 
-    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
+    public final NumberPath<Long> lectureFileId = createNumber("lectureFileId", Long.class);
+
+    public final com.innovation.minflearn.vo.lecture.QLectureTitle lectureTitle;
 
     public final NumberPath<Long> sectionId = createNumber("sectionId", Long.class);
 
@@ -48,6 +50,7 @@ public class QLectureEntity extends EntityPathBase<LectureEntity> {
 
     public QLectureEntity(Class<? extends LectureEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.lectureContent = inits.isInitialized("lectureContent") ? new com.innovation.minflearn.vo.lecture.QLectureContent(forProperty("lectureContent")) : null;
         this.lectureTitle = inits.isInitialized("lectureTitle") ? new com.innovation.minflearn.vo.lecture.QLectureTitle(forProperty("lectureTitle")) : null;
     }
 

@@ -9,13 +9,12 @@ public record AddSectionRequestDto(
         String sectionTitle,
         String learningObjective
 ) {
-    public SectionEntity toEntity(SectionNumber sectionNumber, Long courseId, Long memberId) {
+    public SectionEntity toEntity(SectionNumber sectionNumber, Long courseId) {
         return SectionEntity.createSection(
                 sectionNumber,
                 SectionTitle.of(sectionTitle),
                 LearningObjective.of(learningObjective),
-                courseId,
-                memberId
+                courseId
         );
     }
 }

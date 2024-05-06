@@ -1,8 +1,8 @@
 package com.innovation.minflearn.validator;
 
-import com.innovation.minflearn.exception.custom.lecture.FileIntegrityViolationException;
-import com.innovation.minflearn.exception.custom.lecture.InvalidExtensionException;
-import com.innovation.minflearn.exception.custom.lecture.UnsupportedVideoFileExtensionException;
+import com.innovation.minflearn.exception.custom.lecturefile.FileIntegrityViolationException;
+import com.innovation.minflearn.exception.custom.lecturefile.InvalidExtensionException;
+import com.innovation.minflearn.exception.custom.lecturefile.UnsupportedVideoFileExtensionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Component;

@@ -7,4 +7,6 @@ public interface LectureFileQueryRepository {
     LectureFileQueryDto getFilename(Long lectureFileId);
 
     String getOriginFilename(Long lectureFileId);
+
+    boolean isLectureFileExist(Long lectureFileId);
 }

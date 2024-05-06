@@ -6,5 +6,5 @@ public interface SectionQueryRepository {
 
     SectionNumber getLastSectionNumber(Long courseId);
 
-    boolean isSectionExist(Long sectionId);
+    boolean isSectionExist(Long courseId, Long sectionId);
 }

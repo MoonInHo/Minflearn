@@ -4,9 +4,9 @@ import com.innovation.minflearn.exception.ApplicationException;
 import com.innovation.minflearn.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
-public class InvalidExtensionException extends ApplicationException {
+public class LectureNotFoundException extends ApplicationException {
 
-    public InvalidExtensionException() {
-        super(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_EXTENSION, ErrorCode.INVALID_EXTENSION.getMessage());
+    public LectureNotFoundException() {
+        super(HttpStatus.NOT_FOUND, ErrorCode.LECTURE_NOT_FOUND, ErrorCode.LECTURE_NOT_FOUND.getMessage());
     }
 }

@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface CourseQueryRepository {
 
-    boolean isCourseExist(Long courseId);
-
     Page<GetCourseResponseDto> getCourses(Pageable pageable);
 
     Optional<CourseDetailResponseDto> getCourseDetail(Long courseId);

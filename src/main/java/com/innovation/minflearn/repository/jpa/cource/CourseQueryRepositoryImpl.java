@@ -5,7 +5,6 @@ import com.innovation.minflearn.dto.query.SectionQueryDto;
 import com.innovation.minflearn.dto.response.CourseDetailResponseDto;
 import com.innovation.minflearn.dto.response.GetCourseResponseDto;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,15 +26,6 @@ import static com.innovation.minflearn.entity.QSectionEntity.sectionEntity;
 public class CourseQueryRepositoryImpl implements CourseQueryRepository {
 
     private final JPAQueryFactory queryFactory;
-
-    @Override
-    public boolean isCourseExist(Long courseId) {
-        return queryFactory
-                .selectOne()
-                .from(courseEntity)
-                .where(courseEntity.id.eq(courseId))
-                .fetchFirst() != null;
-    }
 
     @Override
     public Page<GetCourseResponseDto> getCourses(Pageable pageable) {

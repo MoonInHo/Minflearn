@@ -37,4 +37,13 @@ public class LectureFileQueryRepositoryImpl implements LectureFileQueryRepositor
                 .where(lectureFileEntity.id.eq(lectureFileId))
                 .fetchOne();
     }
+
+    @Override
+    public boolean isLectureFileExist(Long lectureFileId) {
+        return queryFactory
+                .selectOne()
+                .from(lectureFileEntity)
+                .where(lectureFileEntity.id.eq(lectureFileId))
+                .fetchFirst() != null;
+    }
 }

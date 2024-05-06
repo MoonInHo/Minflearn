@@ -30,30 +30,24 @@ public class SectionEntity {
     @Column(nullable = false)
     private Long courseId;
 
-    @Column(nullable = false)
-    private Long memberId;
-
     private SectionEntity(
             SectionNumber sectionNumber,
             SectionTitle sectionTitle,
             LearningObjective learningObjective,
-            Long courseId,
-            Long memberId
+            Long courseId
     ) {
         this.sectionNumber = sectionNumber;
         this.sectionTitle = sectionTitle;
         this.learningObjective = learningObjective;
         this.courseId = courseId;
-        this.memberId = memberId;
     }
 
     public static SectionEntity createSection(
             SectionNumber sectionNumber,
             SectionTitle sectionTitle,
             LearningObjective learningObjective,
-            Long courseId,
-            Long memberId
+            Long courseId
     ) {
-        return new SectionEntity(sectionNumber, sectionTitle, learningObjective, courseId, memberId);
+        return new SectionEntity(sectionNumber, sectionTitle, learningObjective, courseId);
     }
 }
