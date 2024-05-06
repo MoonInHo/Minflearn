@@ -1,6 +1,6 @@
 package com.innovation.minflearn.event;
 
-import com.innovation.minflearn.service.LectureFileService;
+import com.innovation.minflearn.service.LectureFileUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -12,15 +12,25 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LectureFileEventListener {
 
-    private final LectureFileService lectureFileService;
+    private final LectureFileUploadService lectureFileService;
 
     @Async
-    @EventListener //TODO 이벤트 수행 도중 실패했을때는 어떻게 처리할 것인가?
-    public void onProductHasUpdatedEvent(ChunkFileHasUploadedEvent chunkFileHasUploadedEvent) throws IOException {
-        lectureFileService.mergeUploadedChunkFile(
-                chunkFileHasUploadedEvent.getLectureFileId(),
-                chunkFileHasUploadedEvent.getTempDirPath(),
-                chunkFileHasUploadedEvent.getChunkFileUploadRequestDto()
+    @EventListener //TODO 이벤트 수행 도중 실패했을때는 어떻게 처리할 것인가? -> 병합이 진행되지 않음을 확인할 방법 필요
+    public void chunkFileUploaded(ChunkFileHasUploadedEvent event) throws IOException {
+        lectureFileService.checkAllChunkFileUploaded(
+                event.lectureFileId(),
+                event.tempDirPath(),
+                event.chunkFileUploadRequestDto()
+        );
+    }
+
+    @Async
+    @EventListener
+    public void allChunkFileUploaded(AllChunkFileHasUploadedEvent event) throws IOException {
+        lectureFileService.checkChunkFileMergeCompleted(
+                event.lectureFileId(),
+                event.tempDirPath(),
+                event.getFailedChunkRequestDto()
         );
     }
 }

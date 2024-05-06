@@ -1,6 +1,6 @@
 package com.innovation.minflearn.repository.jpa.lecture;
 
-import com.innovation.minflearn.dto.LectureFileQueryDto;
+import com.innovation.minflearn.dto.query.LectureFileQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,15 @@ public class LectureFileQueryRepositoryImpl implements LectureFileQueryRepositor
                                 lectureFileEntity.storedFilename.storedFilename
                         )
                 )
+                .from(lectureFileEntity)
+                .where(lectureFileEntity.id.eq(lectureFileId))
+                .fetchOne();
+    }
+
+    @Override
+    public String getOriginFilename(Long lectureFileId) {
+        return queryFactory
+                .select(lectureFileEntity.originFilename.originFilename)
                 .from(lectureFileEntity)
                 .where(lectureFileEntity.id.eq(lectureFileId))
                 .fetchOne();

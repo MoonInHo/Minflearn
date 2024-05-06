@@ -1,8 +1,10 @@
 package com.innovation.minflearn.controller;
 
 import com.innovation.minflearn.dto.request.ChunkFileUploadRequestDto;
+import com.innovation.minflearn.dto.request.GetFailedChunkRequestDto;
+import com.innovation.minflearn.dto.response.GetFailedChunkResponseDto;
 import com.innovation.minflearn.dto.response.UploadLectureFileUrlResponseDto;
-import com.innovation.minflearn.service.LectureFileService;
+import com.innovation.minflearn.service.LectureFileUploadService;
 import com.innovation.minflearn.validator.VideoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ import java.security.NoSuchAlgorithmException;
 public class LectureFileRestController {
 
     private final VideoValidator videoValidator;
-    private final LectureFileService lectureFileService;
+    private final LectureFileUploadService lectureFileUploadService;
 
     @PostMapping("/video")
     public ResponseEntity<UploadLectureFileUrlResponseDto> createLectureFileMetadata(
@@ -28,7 +30,7 @@ public class LectureFileRestController {
     ) throws IOException {
         videoValidator.validateVideoFile(file);
         return ResponseEntity.ok()
-                .body(lectureFileService.createFileMetadataAndTempDir(courseId, authorizationHeader, file));
+                .body(lectureFileUploadService.createFileMetadataAndTempDir(courseId, authorizationHeader, file));
     }
 
     @PostMapping("/{lectureFileId}/chunks/{chunkNumber}")
@@ -40,7 +42,18 @@ public class LectureFileRestController {
             @RequestPart(name = "fileMetadata") ChunkFileUploadRequestDto chunkFileUploadRequestDto
     ) throws IOException, NoSuchAlgorithmException {
         videoValidator.validateFileIntegrity(file, chunkFileUploadRequestDto.checksum());
-        lectureFileService.uploadChunkFile(courseId, lectureFileId, chunkNumber, file, chunkFileUploadRequestDto);
+        lectureFileUploadService.uploadChunkFile(courseId, lectureFileId, chunkNumber, file, chunkFileUploadRequestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{lectureFileId}/chunks/failed-chunks")
+    public ResponseEntity<GetFailedChunkResponseDto> getUploadFailedChunkIndex(
+            @PathVariable(name = "courseId") Long courseId,
+            @PathVariable(name = "lectureFileId") Long lectureFileId,
+            @RequestBody GetFailedChunkRequestDto getFailedChunkRequestDto
+    ) throws IOException {
+        return ResponseEntity.ok().body(
+                lectureFileUploadService.getUploadFailedChunkIndex(courseId, lectureFileId, getFailedChunkRequestDto)
+        );
     }
 }
