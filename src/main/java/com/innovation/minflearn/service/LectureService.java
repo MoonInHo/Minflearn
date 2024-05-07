@@ -4,6 +4,7 @@ import com.innovation.minflearn.dto.request.AddLectureRequestDto;
 import com.innovation.minflearn.dto.request.EditLectureRequestDto;
 import com.innovation.minflearn.entity.LectureEntity;
 import com.innovation.minflearn.exception.custom.course.CourseAccessDeniedException;
+import com.innovation.minflearn.exception.custom.course.CourseNotFoundException;
 import com.innovation.minflearn.exception.custom.lecture.LectureNotFoundException;
 import com.innovation.minflearn.exception.custom.lecturefile.LectureFileNotFoundException;
 import com.innovation.minflearn.exception.custom.section.SectionNotFoundException;
@@ -36,8 +37,9 @@ public class LectureService {
     ) {
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
 
+        validateCourseExistence(courseId);
         verifyCourseOwnership(courseId, memberId);
-        validateSectionExistence(courseId, sectionId);
+        validateSectionExistence(sectionId);
 
         lectureRepository.save(addLectureRequestDto.toEntity(sectionId));
     }
@@ -53,11 +55,13 @@ public class LectureService {
         Long memberId = jwtAuthProvider.extractMemberId(authorizationHeader);
         Long lectureFileId = editLectureRequestDto.lectureFileId();
 
+        validateCourseExistence(courseId);
         verifyCourseOwnership(courseId, memberId);
-        validateLectureExistence(sectionId, lectureId);
+        validateSectionExistence(sectionId);
         validateLectureFileExistence(lectureFileId);
 
-        LectureEntity lectureEntity = lectureRepository.getLectureEntity(lectureId);
+        LectureEntity lectureEntity = lectureRepository.getLectureEntity(lectureId)
+                .orElseThrow(LectureNotFoundException::new);
 
         lectureEntity.editLectureContent(LectureContent.of(editLectureRequestDto.lectureContent()), lectureFileId);
     }
@@ -69,17 +73,17 @@ public class LectureService {
         }
     }
 
-    private void validateSectionExistence(Long courseId, Long sectionId) {
-        boolean sectionExist = sectionRepository.isSectionExist(courseId, sectionId);
-        if (!sectionExist) {
-            throw new SectionNotFoundException();
+    private void validateCourseExistence(Long courseId) {
+        boolean courseExist = courseRepository.isCourseExist(courseId);
+        if (!courseExist) {
+            throw new CourseNotFoundException();
         }
     }
 
-    private void validateLectureExistence(Long sectionId, Long lectureId) {
-        boolean lectureExist = lectureRepository.isLectureExist(sectionId, lectureId);
-        if (!lectureExist) {
-            throw new LectureNotFoundException();
+    private void validateSectionExistence(Long sectionId) {
+        boolean sectionExist = sectionRepository.isSectionExist(sectionId);
+        if (!sectionExist) {
+            throw new SectionNotFoundException();
         }
     }
 

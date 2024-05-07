@@ -2,9 +2,9 @@ package com.innovation.minflearn.repository.jpa.lecture;
 
 import com.innovation.minflearn.entity.LectureEntity;
 
+import java.util.Optional;
+
 public interface LectureQueryRepository {
 
-    LectureEntity getLectureEntity(Long lectureId);
-
-    boolean isLectureExist(Long sectionId, Long lectureId);
+    Optional<LectureEntity> getLectureEntity(Long lectureId);
 }

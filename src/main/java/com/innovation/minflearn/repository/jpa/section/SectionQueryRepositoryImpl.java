@@ -24,14 +24,11 @@ public class SectionQueryRepositoryImpl implements SectionQueryRepository {
     }
 
     @Override
-    public boolean isSectionExist(Long courseId, Long sectionId) {
+    public boolean isSectionExist(Long sectionId) {
         return queryFactory
                 .selectOne()
                 .from(sectionEntity)
-                .where(
-                        sectionEntity.courseId.eq(courseId),
-                        sectionEntity.id.eq(sectionId)
-                )
+                .where(sectionEntity.id.eq(sectionId))
                 .fetchFirst() != null;
     }
 }

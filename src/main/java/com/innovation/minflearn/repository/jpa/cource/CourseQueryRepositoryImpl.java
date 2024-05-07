@@ -139,4 +139,13 @@ public class CourseQueryRepositoryImpl implements CourseQueryRepository {
                 )
                 .fetchFirst() != null;
     }
+
+    @Override
+    public boolean isCourseExist(Long courseId) {
+        return queryFactory
+                .selectOne()
+                .from(courseEntity)
+                .where(courseEntity.id.eq(courseId))
+                .fetchFirst() != null;
+    }
 }

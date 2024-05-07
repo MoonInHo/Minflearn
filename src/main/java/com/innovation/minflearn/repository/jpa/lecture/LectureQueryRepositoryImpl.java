@@ -5,6 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static com.innovation.minflearn.entity.QLectureEntity.lectureEntity;
 
 @Repository
@@ -14,22 +16,12 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public LectureEntity getLectureEntity(Long lectureId) {
-        return queryFactory
+    public Optional<LectureEntity> getLectureEntity(Long lectureId) {
+        return Optional.ofNullable(
+                queryFactory
                 .selectFrom(lectureEntity)
                 .where(lectureEntity.id.eq(lectureId))
-                .fetchOne();
-    }
-
-    @Override
-    public boolean isLectureExist(Long sectionId, Long lectureId) {
-        return queryFactory
-                .selectOne()
-                .from(lectureEntity)
-                .where(
-                        lectureEntity.sectionId.eq(sectionId),
-                        lectureEntity.id.eq(lectureId)
-                )
-                .fetchFirst() != null;
+                .fetchOne()
+        );
     }
 }
