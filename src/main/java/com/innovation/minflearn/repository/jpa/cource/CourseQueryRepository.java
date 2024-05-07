@@ -14,4 +14,6 @@ public interface CourseQueryRepository {
     Optional<CourseDetailResponseDto> getCourseDetail(Long courseId);
 
     boolean isCourseOwner(Long courseId, Long memberId);
+
+    boolean isCourseExist(Long courseId);
 }
