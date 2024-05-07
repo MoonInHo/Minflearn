@@ -1,17 +1,27 @@
 # Minflearn
 IT 직군 지식 공유 플랫폼
 
+## 프로젝트 목적
+- IT 직군 지식 공유 및 커뮤니티
+- IT 직군 접근성 완화 및 인프라 구축
+
 ## 목차
-1. 프로젝트 목적
+1. 개발 환경
 2. 설계
 3. 구현 기능
 4. 추가 계획
 
 ---
 
-## 프로젝트 목적
-- IT 직군 지식 공유 및 커뮤니티
-- IT 직군 접근성 완화 및 인프라 구축
+## 개발 환경
+### 프로젝트 인원 : 1명
+### 개발 기간 : 24.03.11 ~
+### 기술 스택
+- Language : Java 17
+- Framework : Spring Boot 3.2.3 / Spring Security
+- DB : H2 Database / Redis / Elasticsearch
+- ORM : JPA(Hibernate)
+- Library : QueryDsl
 
 ## 설계
 #### ERD
