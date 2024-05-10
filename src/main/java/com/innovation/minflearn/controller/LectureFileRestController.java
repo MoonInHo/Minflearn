@@ -4,6 +4,7 @@ import com.innovation.minflearn.dto.request.ChunkFileUploadRequestDto;
 import com.innovation.minflearn.dto.request.GetFailedChunkRequestDto;
 import com.innovation.minflearn.dto.response.GetFailedChunkResponseDto;
 import com.innovation.minflearn.dto.response.UploadLectureFileUrlResponseDto;
+import com.innovation.minflearn.service.LectureFileService;
 import com.innovation.minflearn.service.LectureFileUploadService;
 import com.innovation.minflearn.validator.VideoValidator;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,14 @@ import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/courses/{courseId}/lecture-file")
+@RequestMapping("/api/courses/{courseId}/lecture-files")
 public class LectureFileRestController {
 
     private final VideoValidator videoValidator;
+    private final LectureFileService lectureFileService;
     private final LectureFileUploadService lectureFileUploadService;
 
-    @PostMapping("/video")
+    @PostMapping
     public ResponseEntity<UploadLectureFileUrlResponseDto> createLectureFileMetadata(
             @PathVariable(name = "courseId") Long courseId,
             @RequestHeader(name = "Authorization") String authorizationHeader,
@@ -30,7 +32,7 @@ public class LectureFileRestController {
     ) throws IOException {
         videoValidator.validateVideoFile(file);
         return ResponseEntity.ok()
-                .body(lectureFileUploadService.createFileMetadataAndTempDir(courseId, authorizationHeader, file));
+                .body(lectureFileService.createFileMetadataAndTempDir(courseId, authorizationHeader, file));
     }
 
     @PostMapping("/{lectureFileId}/chunks/{chunkNumber}")
