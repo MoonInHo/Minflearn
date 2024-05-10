@@ -8,5 +8,7 @@ public interface LectureFileQueryRepository {
 
     String getOriginFilename(Long lectureFileId);
 
+    String getStoredFilename(Long lectureFileId);
+
     boolean isLectureFileExist(Long lectureFileId);
 }

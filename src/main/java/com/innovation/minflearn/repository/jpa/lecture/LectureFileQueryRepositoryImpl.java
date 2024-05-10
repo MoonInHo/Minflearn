@@ -39,6 +39,15 @@ public class LectureFileQueryRepositoryImpl implements LectureFileQueryRepositor
     }
 
     @Override
+    public String getStoredFilename(Long lectureFileId) {
+        return queryFactory
+                .select(lectureFileEntity.storedFilename.storedFilename)
+                .from(lectureFileEntity)
+                .where(lectureFileEntity.id.eq(lectureFileId))
+                .fetchOne();
+    }
+
+    @Override
     public boolean isLectureFileExist(Long lectureFileId) {
         return queryFactory
                 .selectOne()
